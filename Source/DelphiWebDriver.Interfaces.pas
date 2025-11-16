@@ -75,6 +75,7 @@ type
     function GetWindowHandle: string;
     function GetWindowHandles: TArray<string>;
     procedure SwitchToWindow(const Handle: string);
+    procedure SwitchToMainWindow;
     procedure CloseWindow;
     function NewWindow(const WindowType: string = 'tab'): string;
     procedure MaximizeWindow;

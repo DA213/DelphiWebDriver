@@ -29,6 +29,7 @@ type
     FHTTP: THTTPClient;
     FSessionId: string;
     FBaseUrl: string;
+    FInitialWindowHandle: string;
     FCookies: IWebDriverCookies;
   public
     constructor Create(const ABaseUrl: string); virtual;
@@ -61,6 +62,7 @@ type
     function GetWindowHandle: string;
     function GetWindowHandles: TArray<string>;
     procedure SwitchToWindow(const Handle: string);
+    procedure SwitchToMainWindow;
     procedure CloseWindow;
     function NewWindow(const WindowType: string = 'tab'): string;
     procedure MaximizeWindow;
@@ -389,6 +391,13 @@ begin
   end;
 end;
 
+procedure TWebDriver.SwitchToMainWindow;
+begin
+  if FInitialWindowHandle = '' then
+    raise Exception.Create('Main window handle not stored.');
+  SwitchToWindow(FInitialWindowHandle);
+end;
+
 function TWebDriver.SendCommand(const Method, Endpoint: string; Body: TJSONObject): TJSONValue;
 var
   LUrl: string;
@@ -433,7 +442,10 @@ begin
         raise EWebDriverError.Create('No value object returned from WebDriver');
 
       if LSessionObj.TryGetValue<string>('sessionId', FSessionId) then
-        Result := FSessionId
+        begin
+          Result := FSessionId;
+          FInitialWindowHandle := GetWindowHandle;
+        end
       else
         raise EWebDriverError.Create('SessionId not found in response: ' +
           LRes.ToString);
