@@ -63,6 +63,7 @@ type
     function GetWindowHandles: TArray<string>;
     procedure SwitchToWindow(const Handle: string);
     procedure SwitchToMainWindow;
+    procedure SwitchToWindowIndex(Index: Integer);
     procedure CloseWindow;
     function NewWindow(const WindowType: string = 'tab'): string;
     procedure MaximizeWindow;
@@ -127,6 +128,29 @@ begin
     SendCommand('POST', '/session/' + FSessionId + '/window', JSON).Free;
   finally
     JSON.Free;
+  end;
+end;
+
+procedure TWebDriver.SwitchToWindowIndex(Index: Integer);
+var
+  Handles: TArray<string>;
+  Body: TJSONObject;
+  JSON: TJSONValue;
+begin
+  Handles := GetWindowHandles;
+  if (Index < 0) or (Index >= Length(Handles)) then
+    raise Exception.CreateFmt('Invalid window index %d', [Index]);
+  Body := TJSONObject.Create;
+  try
+    Body.AddPair('handle', Handles[Index]);
+    JSON := SendCommand(
+      'POST',
+      '/session/' + FSessionId + '/window',
+      Body
+    );
+    JSON.Free;
+  finally
+    Body.Free;
   end;
 end;
 
