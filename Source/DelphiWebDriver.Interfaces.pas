@@ -9,9 +9,6 @@ uses
   DelphiWebDriver.Types;
 
 type
-  IWebElement = interface;
-  IWebDriver = interface;
-
   IWebDriverCookies = interface
     ['{9F8A2A3C-0E6D-4F1E-8C7E-9D3A1B5C2F3A}']
     function GetAll: TArray<TCookie>;
@@ -50,6 +47,9 @@ type
     procedure SaveScreenshotToFile(const FileName: string);
     function WaitUntilElement(By: TBy; TimeoutMS: Integer = 5000;
       IntervalMS: Integer = 200): IWebElement;
+    function ExecuteScript(const Script: string; const Args: array of string): TJSONValue; overload;
+    procedure ExecuteScript(const Script: string); overload;
+    procedure WaitUntilPageLoad(TimeoutMS: Integer = 10000);
   end;
 
 implementation

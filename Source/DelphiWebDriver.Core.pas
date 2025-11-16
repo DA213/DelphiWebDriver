@@ -47,6 +47,9 @@ type
     function TakeScreenshot: TBytes;
     procedure SaveScreenshotToFile(const FileName: string);
     function WaitUntilElement(By: TBy; TimeoutMS: Integer = 5000; IntervalMS: Integer = 200): IWebElement;
+    function ExecuteScript(const Script: string; const Args: array of string): TJSONValue; overload;
+    procedure ExecuteScript(const Script: string); overload;
+    procedure WaitUntilPageLoad(TimeoutMS: Integer = 10000);
   end;
 
 implementation
@@ -64,6 +67,18 @@ destructor TWebDriver.Destroy;
 begin
   FHTTP.Free;
   inherited;
+end;
+
+procedure TWebDriver.ExecuteScript(const Script: string);
+var
+  Resp: TJSONValue;
+begin
+  Resp := ExecuteScript(Script, []);
+  try
+    // ignore result
+  finally
+    Resp.Free;
+  end;
 end;
 
 function TWebDriver.WaitUntilElement(By: TBy; TimeoutMS, IntervalMS: Integer) : IWebElement;
@@ -88,6 +103,56 @@ begin
     Sleep(IntervalMS);
   end;
   Result := nil;
+end;
+
+function TWebDriver.ExecuteScript(const Script: string; const Args: array of string): TJSONValue;
+var
+  Body : TJSONObject;
+  Arr: TJSONArray;
+  S: string;
+begin
+  Body := TJSONObject.Create;
+  try
+    Body.AddPair('script', Script);
+    Arr := TJSONArray.Create;
+    Body.AddPair('args', Arr);
+
+    for S in Args do
+      Arr.Add(S);
+
+    Result := SendCommand('POST',
+      '/session/' + FSessionId + '/execute/sync',
+      Body
+    );
+  finally
+    Body.Free;
+  end;
+end;
+
+procedure TWebDriver.WaitUntilPageLoad(TimeoutMS: Integer);
+var
+  StartTime: TDateTime;
+  Resp: TJSONValue;
+  ReadyState: string;
+begin
+  StartTime := Now;
+  while MilliSecondsBetween(Now, StartTime) < TimeoutMS do
+  begin
+    try
+      Resp := ExecuteScript('return document.readyState;', []);
+      try
+        ReadyState := Resp.GetValue<string>('value');
+      finally
+        Resp.Free;
+      end;
+
+      if ReadyState = 'complete' then
+        Exit;
+    except
+    end;
+    Sleep(100);
+  end;
+  raise EWebDriverError.Create('Timeout waiting for page to finish loading.');
 end;
 
 procedure TWebDriver.SwitchToFrame(const FrameName: string);
@@ -269,57 +334,78 @@ end;
 
 procedure TWebDriver.Navigate(const Url: string);
 var
-  B: TJSONObject;
+  JSON: TJSONObject;
 begin
-  B := TJSONObject.Create;
+  JSON := TJSONObject.Create;
   try
-    B.AddPair('url', Url);
-    SendCommand('POST', '/session/' + FSessionId + '/url', B).Free;
+    JSON.AddPair('url', Url);
+    SendCommand('POST', '/session/' + FSessionId + '/url', JSON).Free;
   finally
-    B.Free;
+    JSON.Free;
   end;
 end;
 
 function TWebDriver.GetTitle: string;
 var
-  L: TJSONValue;
+  JSON: TJSONValue;
 begin
-  L := SendCommand('GET', '/session/' + FSessionId + '/title');
+  JSON := SendCommand('GET', '/session/' + FSessionId + '/title');
   try
-    Result := L.GetValue<string>('value');
+    Result := JSON.GetValue<string>('value');
   finally
-    L.Free;
+    JSON.Free;
   end;
 end;
 
 function TWebDriver.GetCurrentUrl: string;
 var
-  L: TJSONValue;
+  JSON: TJSONValue;
 begin
-  L := SendCommand('GET', '/session/' + FSessionId + '/url');
+  JSON := SendCommand('GET', '/session/' + FSessionId + '/url');
   try
-    Result := L.GetValue<string>('value');
+    Result := JSON.GetValue<string>('value');
   finally
-    L.Free;
+    JSON.Free;
   end;
 end;
 
 procedure TWebDriver.Back;
+var
+  JSON: TJSONObject;
 begin
-  SendCommand('POST', '/session/' + FSessionId + '/back',
-    TJSONObject.Create).Free;
+  JSON := TJSONObject.Create;
+  try
+    SendCommand('POST', '/session/' + FSessionId + '/back',
+      JSON).Free;
+  finally
+    JSON.Free;
+  end;
 end;
 
 procedure TWebDriver.Forward;
+var
+  JSON: TJSONObject;
 begin
-  SendCommand('POST', '/session/' + FSessionId + '/forward',
-    TJSONObject.Create).Free;
+  JSON := TJSONObject.Create;
+  try
+    SendCommand('POST', '/session/' + FSessionId + '/forward',
+      JSON).Free;
+  finally
+    JSON.Free;
+  end;
 end;
 
 procedure TWebDriver.Refresh;
+var
+  JSON: TJSONObject;
 begin
-  SendCommand('POST', '/session/' + FSessionId + '/refresh',
-    TJSONObject.Create).Free;
+  JSON := TJSONObject.Create;
+  try
+    SendCommand('POST', '/session/' + FSessionId + '/refresh',
+      JSON).Free;
+  finally
+    JSON.Free;
+  end;
 end;
 
 function TWebDriver.Cookies: IWebDriverCookies;
@@ -331,15 +417,15 @@ end;
 
 function TWebDriver.TakeScreenshot: TBytes;
 var
-  L: TJSONValue;
+  JSON: TJSONValue;
   Base64Str: string;
 begin
-  L := SendCommand('GET', '/session/' + FSessionId + '/screenshot');
+  JSON := SendCommand('GET', '/session/' + FSessionId + '/screenshot');
   try
-    Base64Str := L.GetValue<string>('value');
+    Base64Str := JSON.GetValue<string>('value');
     Result := TNetEncoding.Base64.DecodeStringToBytes(Base64Str);
   finally
-    L.Free;
+    JSON.Free;
   end;
 end;
 

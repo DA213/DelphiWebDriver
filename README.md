@@ -15,6 +15,7 @@ A modern, lightweight Delphi client for the W3C WebDriver protocol (the same pro
 * Manage cookies, frames
 * Interface-based memory management for stability
 * Cross-browser support (Chrome only for now)
+* And more cool stuff is coming...
 
 ---
 
@@ -146,8 +147,9 @@ If you find a bug, please provide:
 * [x] Element location by CSS/XPath
 * [x] Wait for elements and conditions
 * [x] Click, send keys, submit forms
+* [x] Wait for page to load
 * [x] Screenshot support
 * [x] Cookie management
 * [x] Frame handling
-* [ ] JavaScript execution
+* [x] JavaScript execution
 * [ ] Full WebDriver command coverage
