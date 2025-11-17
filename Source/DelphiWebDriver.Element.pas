@@ -14,6 +14,7 @@ uses
   System.JSON,
   System.Types,
   System.Generics.Collections,
+  System.StrUtils,
   DelphiWebDriver.Interfaces,
   DelphiWebDriver.Types;
 
@@ -43,6 +44,7 @@ type
     function GetRect: TRect;
     function FindElement(By: TBy): IWebElement;
     function FindElements(By: TBy): TArray<IWebElement>;
+    procedure ScrollIntoView(BehaviorSmooth: Boolean = False);
   end;
 
 implementation
@@ -59,6 +61,38 @@ end;
 function TWebElement.GetElementId: string;
 begin
   Result := FElementId;
+end;
+
+procedure TWebElement.ScrollIntoView(BehaviorSmooth: Boolean);
+var
+  Script: string;
+  Params: TJSONObject;
+  ArrayArgs: TJSONArray;
+  ElementObj: TJSONObject;
+begin
+  Script :=
+    'arguments[0].scrollIntoView({' +
+    'behavior: "' + IfThen(BehaviorSmooth, 'smooth', 'auto') + '",' +
+    'block: "center",' +
+    'inline: "nearest"' +
+    '});';
+  Params := TJSONObject.Create;
+  ElementObj := TJSONObject.Create;
+  ArrayArgs := TJSONArray.Create;
+  try
+    ElementObj.AddPair('ELEMENT', FElementId);
+    ElementObj.AddPair('element-6066-11e4-a52e-4f735466cecf', FElementId);
+    ArrayArgs.Add(ElementObj);
+    Params.AddPair('script', Script);
+    Params.AddPair('args', ArrayArgs);
+    FDriver.SendCommand(
+      'POST',
+      '/session/' + FDriver.GetSessionId + '/execute/sync',
+      Params
+    ).Free;
+  finally
+    Params.Free;
+  end;
 end;
 
 procedure TWebElement.Click;

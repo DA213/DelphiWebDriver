@@ -47,6 +47,7 @@ type
     function FindElement(By: TBy): IWebElement;
     function FindElements(By: TBy): TArray<IWebElement>;
     property ElementId: string read GetElementId;
+    procedure ScrollIntoView(BehaviorSmooth: Boolean = False);
   end;
 
   IWebDriver = interface
