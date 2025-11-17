@@ -23,6 +23,8 @@ type
     procedure Add(const Cookie: TCookie);
     procedure Delete(const Name: string);
     procedure DeleteAll;
+    function GetByName(const Name: string): TCookie;
+    function Exists(const Name: string): Boolean;
   end;
 
   IWebElement = interface

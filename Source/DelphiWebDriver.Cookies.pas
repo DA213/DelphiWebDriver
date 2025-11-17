@@ -27,6 +27,8 @@ type
     procedure Add(const Cookie: TCookie);
     procedure Delete(const Name: string);
     procedure DeleteAll;
+    function GetByName(const Name: string): TCookie;
+    function Exists(const Name: string): Boolean;
   end;
 
 implementation
@@ -37,6 +39,30 @@ constructor TWebDriverCookies.Create(ADriver: IWebDriver);
 begin
   inherited Create;
   FDriver := ADriver;
+end;
+
+function TWebDriverCookies.GetByName(const Name: string): TCookie;
+var
+  All: TArray<TCookie>;
+  Cookie: TCookie;
+begin
+  All := GetAll;
+  for Cookie in All do
+    if SameText(Cookie.Name, Name) then
+      Exit(Cookie);
+  raise EWebDriverError.Create('Cookie "' + Name + '" not found');
+end;
+
+function TWebDriverCookies.Exists(const Name: string): Boolean;
+var
+  All: TArray<TCookie>;
+  Cookie: TCookie;
+begin
+  All := GetAll;
+  for Cookie in All do
+    if SameText(Cookie.Name, Name) then
+      Exit(True);
+  Result := False;
 end;
 
 function TWebDriverCookies.GetAll: TArray<TCookie>;
