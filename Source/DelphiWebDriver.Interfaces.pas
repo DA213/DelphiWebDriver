@@ -94,6 +94,7 @@ type
     procedure ScrollBy(X, Y: Integer);
     procedure ScrollToTop;
     procedure ScrollToBottom;
+    function GetElementAttribute(By: TBy; const Attr: string): string;
   end;
 
 implementation

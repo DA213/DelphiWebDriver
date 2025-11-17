@@ -76,6 +76,7 @@ type
     procedure ScrollBy(X, Y: Integer);
     procedure ScrollToTop;
     procedure ScrollToBottom;
+    function GetElementAttribute(By: TBy; const Attr: string): string;
   end;
 
 implementation
@@ -94,6 +95,17 @@ begin
   FCookies := nil;
   FHTTP.Free;
   inherited;
+end;
+
+function TWebDriver.GetElementAttribute(By: TBy; const Attr: string): string;
+var
+  Elem: IWebElement;
+begin
+  Elem := FindElement(By);
+  if Assigned(Elem) then
+    Result := Elem.GetAttribute(Attr)
+  else
+    Result := '';
 end;
 
 procedure TWebDriver.ScrollBy(X, Y: Integer);
