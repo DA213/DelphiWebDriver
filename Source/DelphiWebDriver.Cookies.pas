@@ -19,6 +19,7 @@ uses
 type
   TWebDriverCookies = class(TInterfacedObject, IWebDriverCookies)
   private
+    [weak]
     FDriver: IWebDriver;
   public
     constructor Create(ADriver: IWebDriver);

@@ -64,6 +64,10 @@ type
     procedure GoBack;
     procedure GoForward;
     procedure Refresh;
+    procedure SwitchToFrameElement(const Element: IWebElement);
+    procedure SwitchToFrame(const FrameName: string);
+    procedure SwitchToDefaultContent;
+    function Cookies: IWebDriverCookies;
     function TakeScreenshot: TBytes;
     procedure SaveScreenshotToFile(const FileName: string);
     function WaitUntilElement(By: TBy; TimeoutMS: Integer = 5000; IntervalMS: Integer = 200): IWebElement;

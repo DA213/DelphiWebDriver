@@ -86,6 +86,7 @@ end;
 
 destructor TWebDriver.Destroy;
 begin
+  FCookies := nil;
   FHTTP.Free;
   inherited;
 end;
