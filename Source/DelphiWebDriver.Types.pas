@@ -1,4 +1,4 @@
-{
+﻿{
   ------------------------------------------------------------------------------
   Author: ABDERRAHMANE
   Github: https://github.com/DA213/DelphiWebDriver
@@ -89,9 +89,23 @@ begin
 end;
 
 class function TBy.ClassName(const AValue: string): TBy;
+var
+  Trimmed: string;
+  Parts: TArray<string>;
+  Part, Selector: string;
 begin
-  Result.Strategy := 'class name';
-  Result.Value := AValue;
+  Trimmed := AValue.Trim;
+  Parts := Trimmed.Split([' '], TStringSplitOptions.ExcludeEmpty);
+
+  if Length(Parts) = 0 then
+    raise EWebDriverError.Create('ClassName cannot be empty.');
+
+  Selector := '';
+  for Part in Parts do
+    Selector := Selector + '.' + Part;
+
+  Result.Strategy := 'css selector';
+  Result.Value := Selector;
 end;
 
 class function TBy.TagName(const AValue: string): TBy;
