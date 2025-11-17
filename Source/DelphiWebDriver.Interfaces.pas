@@ -89,6 +89,8 @@ type
     procedure MinimizeWindow;
     procedure FullscreenWindow;
     function GetPageSource: string;
+    function ElementExists(By: TBy): Boolean;
+    function ElementsExist(By: TBy): Boolean;
   end;
 
 implementation

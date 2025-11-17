@@ -71,6 +71,8 @@ type
     procedure MinimizeWindow;
     procedure FullscreenWindow;
     function GetPageSource: string;
+    function ElementExists(By: TBy): Boolean;
+    function ElementsExist(By: TBy): Boolean;
   end;
 
 implementation
@@ -280,6 +282,24 @@ begin
     );
   finally
     Body.Free;
+  end;
+end;
+
+function TWebDriver.ElementExists(By: TBy): Boolean;
+begin
+  try
+    Result := Assigned(FindElement(By));
+  except
+    Result := False;
+  end;
+end;
+
+function TWebDriver.ElementsExist(By: TBy): Boolean;
+begin
+  try
+    Result := Length(FindElements(By)) > 0;
+  except
+    Result := False;
   end;
 end;
 
