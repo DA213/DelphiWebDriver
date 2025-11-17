@@ -42,6 +42,8 @@ type
     class function XPath(const AValue: string): TBy; static;
     class function Css(const AValue: string): TBy; static;
     class function TagName(const AValue: string): TBy; static;
+    class function LinkText(const AValue: string): TBy; static;
+    class function PartialLinkText(const AValue: string): TBy; static;
     function ToJson: TJSONObject;
   end;
 
@@ -95,6 +97,18 @@ end;
 class function TBy.TagName(const AValue: string): TBy;
 begin
   Result.Strategy := 'tag name';
+  Result.Value    := AValue;
+end;
+
+class function TBy.LinkText(const AValue: string): TBy;
+begin
+  Result.Strategy := 'link text';
+  Result.Value    := AValue;
+end;
+
+class function TBy.PartialLinkText(const AValue: string): TBy;
+begin
+  Result.Strategy := 'partial link text';
   Result.Value    := AValue;
 end;
 
