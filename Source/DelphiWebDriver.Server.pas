@@ -62,7 +62,7 @@ begin
     Sleep(800);
   end
   else
-    raise Exception.Create('Failed to start ChromeDriver. Error: ' + SysErrorMessage(GetLastError));
+    raise Exception.Create('Failed to start driver. Error: ' + SysErrorMessage(GetLastError));
 end;
 
 procedure TWebDriverServer.Stop;

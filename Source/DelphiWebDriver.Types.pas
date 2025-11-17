@@ -16,6 +16,12 @@ uses
 type
   EWebDriverError = class(Exception);
 
+  TBrowser = (Chrome, Firefox, Edge);
+  TBrowserHelper = record Helper for TBrowser
+    function Name : String;
+    function DriverName : String;
+  end;
+
   TCookie = record
     Name: string;
     Value: string;
@@ -83,6 +89,26 @@ class function TBy.ClassName(const AValue: string): TBy;
 begin
   Result.Strategy := 'class name';
   Result.Value := AValue;
+end;
+
+{ TBrowserHelper }
+
+function TBrowserHelper.DriverName: String;
+begin
+  case Self of
+    Chrome  : Result := 'chromedriver.exe';
+    Firefox : Result := 'geckodriver.exe';
+    Edge    : Result := 'msedgedriver.exe';
+  end;
+end;
+
+function TBrowserHelper.Name: String;
+begin
+  case Self of
+    Chrome  : Result := 'chrome';
+    Firefox : Result := 'firefox';
+    Edge    : Result := 'MicrosoftEdge';
+  end;
 end;
 
 end.

@@ -14,7 +14,8 @@ A modern, lightweight Delphi client (No third party) for the W3C WebDriver proto
 * Wait for elements to appear or conditions to be true
 * Manage cookies, frames
 * Interface-based memory management for stability
-* Cross-browser support (Chrome, Firefox, Edge)
+* Cross-browser support (Chrome, Firefox, Edge) 
+* headless mode support (Chrome, Firefox, Edge)
 * And more cool stuff is coming...
 
 ---
@@ -151,6 +152,7 @@ If you find a bug, please provide:
 * [x] Screenshot support  
 * [x] Cross-browser (Chrome, Firefox, Edge)
 * [x] Cookie management
-* [x] Frame handling
+* [x] Frame 
 * [x] JavaScript execution
+* [x] handling headless mode
 * [ ] Full WebDriver command coverage
