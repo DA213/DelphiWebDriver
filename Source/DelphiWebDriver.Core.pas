@@ -77,6 +77,8 @@ type
     procedure ScrollToTop;
     procedure ScrollToBottom;
     function GetElementAttribute(By: TBy; const Attr: string): string;
+    function TakeElementScreenshot(By: TBy): TBytes;
+    procedure SaveElementScreenshotToFile(By: TBy; const FileName: string);
   end;
 
 implementation
@@ -95,6 +97,36 @@ begin
   FCookies := nil;
   FHTTP.Free;
   inherited;
+end;
+
+function TWebDriver.TakeElementScreenshot(By: TBy): TBytes;
+var
+  Elem: IWebElement;
+  JSON: TJSONValue;
+  Base64Str: string;
+begin
+  Elem := nil;
+  try
+    Elem := FindElement(By);
+  except
+    on E: EWebDriverError do
+      raise EWebDriverError.CreateFmt('Element not found for screenshot: %s=%s', [By.Strategy, By.Value]);
+  end;
+  if not Assigned(Elem) then
+  begin
+    SetLength(Result, 0);
+    Exit;
+  end;
+  JSON := SendCommand(
+    'GET',
+    '/session/' + FSessionId + '/element/' + Elem.ElementId + '/screenshot'
+  );
+  try
+    Base64Str := JSON.GetValue<string>('value');
+    Result := TNetEncoding.Base64.DecodeStringToBytes(Base64Str);
+  finally
+    JSON.Free;
+  end;
 end;
 
 function TWebDriver.GetElementAttribute(By: TBy; const Attr: string): string;
@@ -735,6 +767,20 @@ begin
     Result := TNetEncoding.Base64.DecodeStringToBytes(Base64Str);
   finally
     JSON.Free;
+  end;
+end;
+
+procedure TWebDriver.SaveElementScreenshotToFile(By: TBy; const FileName: string);
+var
+  Bytes: TBytes;
+  FS: TFileStream;
+begin
+  Bytes := TakeElementScreenshot(By);
+  FS := TFileStream.Create(FileName, fmCreate);
+  try
+    FS.WriteBuffer(Bytes[0], Length(Bytes));
+  finally
+    FS.Free;
   end;
 end;
 

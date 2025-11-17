@@ -95,6 +95,8 @@ type
     procedure ScrollToTop;
     procedure ScrollToBottom;
     function GetElementAttribute(By: TBy; const Attr: string): string;
+    function TakeElementScreenshot(By: TBy): TBytes;
+    procedure SaveElementScreenshotToFile(By: TBy; const FileName: string);
   end;
 
 implementation
