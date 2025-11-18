@@ -44,7 +44,6 @@ implementation
 uses
   DelphiWebDriver.Core,
   DelphiWebDriver.Types,
-  DelphiWebDriver.Capabilities,
   DelphiWebDriver.Server,
   DelphiWebDriver.Interfaces;
 
@@ -54,7 +53,6 @@ procedure TMainForm.StartDriverButtonClick(Sender: TObject);
 var
   Server: TWebDriverServer;
   Driver: IWebDriver;
-  Caps: TWebDriverCapabilities;
 begin
   var DriverName := '';
   var BrowserName := '';
@@ -85,35 +83,24 @@ begin
     Server.Start;
     Driver := TWebDriver.Create('http://localhost:9515');
     try
-      Caps := TWebDriverCapabilities.Create;
-      try
-        Caps.BrowserName := BrowserName;
-        if HeadlessModeCheckBox.IsChecked then
-          Caps.Headless := True
-        else
-          Caps.Headless := False;
-
-        // Optional Args
-        // Caps.Args.Add('--disable-gpu');
-        // Caps.Args.Add('--window-size=1920,1080');
-
-        Driver.StartSession(Caps);
-      finally
-        Caps.Free;
-      end;
-
-      Driver.Navigate('https://www.google.com');
-      Driver.WaitUntilPageLoad;
-
-      LogsMemo.Text := Driver.GetPageSource;
-
+      Driver.Capabilities.BrowserName := BrowserName;
+      Driver.Capabilities.Headless := HeadlessModeCheckBox.IsChecked;
+      // Optional
+      // Driver.Capabilities.Args.Add('--disable-gpu');
+      // Driver.Capabilities.Args.Add('--window-size=1920,1080');
+      Driver.Sessions.StartSession;
+      Driver.Navigation.Navigate('https://www.google.com');
+      Driver.Wait.WaitUntilPageLoad;
+      LogsMemo.Text := Driver.Document.GetPageSource;
+      Driver.Screenshot.SaveScreenshotToFile('Screenshot.png');
     finally
-      Driver.Quit;
+      Driver.Sessions.Quit;
     end;
   finally
     Server.Stop;
     Server.Free;
   end;
+
 end;
 
 end.
