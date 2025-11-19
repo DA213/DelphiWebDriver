@@ -1,4 +1,4 @@
-{
+﻿{
   ------------------------------------------------------------------------------
   Author: ABDERRAHMANE
   Github: https://github.com/DA213/DelphiWebDriver
@@ -57,7 +57,9 @@ begin
   Stream := nil;
   try
     if Assigned(Body) then
-      Stream := TStringStream.Create(Body.ToJSON, TEncoding.UTF8);
+      Stream := TStringStream.Create(Body.ToJSON, TEncoding.UTF8)
+    else
+      Stream := TStringStream.Create('{}', TEncoding.UTF8);
 
     if Method = 'POST' then
       LResponse := FHTTP.Post(LUrl, Stream)
