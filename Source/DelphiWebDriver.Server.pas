@@ -1,25 +1,31 @@
-{
-  ------------------------------------------------------------------------------
-  Author: ABDERRAHMANE
-  Github: https://github.com/DA213/DelphiWebDriver
-  ------------------------------------------------------------------------------
-}
-
-unit DelphiWebDriver.Server;
+﻿unit DelphiWebDriver.Server;
 
 interface
 
 uses
-  System.SysUtils,
-  Winapi.Windows,
-  TlHelp32;
+  System.SysUtils
+{$IFDEF POSIX}
+  , Posix.Unistd
+  , Posix.SysTypes
+  , Posix.SysWait
+  , Posix.Spawn
+  , Posix.Signal
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  , Winapi.Windows;
+{$ENDIF}
 
 type
   TWebDriverServer = class
   private
-    FProcessInfo: TProcessInformation;
-    FStarted: Boolean;
     FExePath: string;
+    FStarted: Boolean;
+    {$IFDEF MSWINDOWS}
+    FProcessInfo: TProcessInformation;
+    {$ENDIF}
+    {$IFDEF POSIX}
+    FPID: pid_t;
+    {$ENDIF}
   public
     constructor Create(const AExePath: string);
     destructor Destroy; override;
@@ -37,6 +43,9 @@ begin
   inherited Create;
   FExePath := AExePath;
   FStarted := False;
+  {$IFDEF POSIX}
+  FPID := 0;
+  {$ENDIF}
 end;
 
 destructor TWebDriverServer.Destroy;
@@ -47,69 +56,65 @@ end;
 
 procedure TWebDriverServer.Start;
 var
-  StartupInfo: TStartupInfo;
-  CmdLine: string;
+  Cmd: string;
+{$IFDEF POSIX}
+  Args: array[0..2] of PAnsiChar;
+  Status: Integer;
+{$ENDIF}
 begin
-  if FStarted then Exit;
-  ZeroMemory(@StartupInfo, SizeOf(StartupInfo));
-  StartupInfo.cb := SizeOf(StartupInfo);
+  if FStarted then
+    Exit;
+  if not FileExists(FExePath) then
+    raise Exception.Create('WebDriver executable not found: ' + FExePath);
+  Cmd := FExePath + ' --port=9515';
+  {$IFDEF MSWINDOWS}
+  var Startup: TStartupInfo;
+  ZeroMemory(@Startup, SizeOf(Startup));
   ZeroMemory(@FProcessInfo, SizeOf(FProcessInfo));
-  CmdLine := '"' + FExePath + '" --port=9515';
-  if CreateProcess(nil, PChar(CmdLine), nil, nil, False,
-    CREATE_NO_WINDOW, nil, nil, StartupInfo, FProcessInfo) then
-  begin
-    FStarted := True;
-    Sleep(800);
-  end
-  else
-    raise Exception.Create('Failed to start driver. Error: ' + SysErrorMessage(GetLastError));
+  Startup.cb := SizeOf(Startup);
+  if not CreateProcess(nil, PChar(Cmd), nil, nil, False, CREATE_NO_WINDOW, nil, nil,
+                      Startup, FProcessInfo) then
+    raise Exception.Create('Cannot start driver: ' + SysErrorMessage(GetLastError));
+  {$ENDIF}
+  {$IFDEF POSIX}
+  Args[0] := PAnsiChar(AnsiString(FExePath));
+  Args[1] := PAnsiChar(AnsiString('--port=9515'));
+  Args[2] := nil;
+  Status := posix_spawn(@FPID, PAnsiChar(AnsiString(FExePath)), nil, nil, @Args[0], environ);
+  if Status <> 0 then
+    raise Exception.Create('Failed to start WebDriver process (posix_spawn), errno=' + Status.ToString);
+  {$ENDIF}
+  FStarted := True;
+  Sleep(700);
 end;
 
 procedure TWebDriverServer.Stop;
 begin
-  if not FStarted then Exit;
-
-  if WaitForSingleObject(FProcessInfo.hProcess, 3000) = WAIT_TIMEOUT then
-  begin
-    TerminateProcess(FProcessInfo.hProcess, 0);
-    WaitForSingleObject(FProcessInfo.hProcess, 1000);
-  end;
-
+  if not FStarted then
+    Exit;
+  {$IFDEF MSWINDOWS}
   if FProcessInfo.hProcess <> 0 then
   begin
+    if WaitForSingleObject(FProcessInfo.hProcess, 1500) = WAIT_TIMEOUT then
+      TerminateProcess(FProcessInfo.hProcess, 0);
+    WaitForSingleObject(FProcessInfo.hProcess, 500);
     CloseHandle(FProcessInfo.hProcess);
-    FProcessInfo.hProcess := 0;
-  end;
-
-  if FProcessInfo.hThread <> 0 then
-  begin
     CloseHandle(FProcessInfo.hThread);
+    FProcessInfo.hProcess := 0;
     FProcessInfo.hThread := 0;
   end;
-
-  FStarted := False;
-
-  var ProcName := ExtractFileName(FExePath);
-  var Snap := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-  if Snap <> INVALID_HANDLE_VALUE then
-  try
-    var PE: TProcessEntry32;
-    PE.dwSize := SizeOf(PE);
-    if Process32First(Snap, PE) then
-    repeat
-      if SameText(PE.szExeFile, ProcName) then
-      begin
-        var HProc := OpenProcess(PROCESS_TERMINATE, False, PE.th32ProcessID);
-        if HProc <> 0 then
-        begin
-          TerminateProcess(HProc, 0);
-          CloseHandle(HProc);
-        end;
-      end;
-    until not Process32Next(Snap, PE);
-  finally
-    CloseHandle(Snap);
+  {$ENDIF}
+  {$IFDEF POSIX}
+  if FPID > 0 then
+  begin
+    fpKill(FPID, SIGTERM);
+    Sleep(300);
+    if fpKill(FPID, 0) = 0 then
+      fpKill(FPID, SIGKILL);
+    FPID := 0;
   end;
+  {$ENDIF}
+  FStarted := False;
 end;
 
 end.
