@@ -69,20 +69,21 @@ begin
   try
     Body.AddPair('using', By.Strategy);
     Body.AddPair('value', By.Value);
-
-    LRes := FDriver.Commands.SendCommand('POST', '/session/' + FDriver.Sessions.GetSessionId + '/element', Body);
+    LRes := FDriver.Commands.SendCommand(
+      'POST',
+      '/session/' + FDriver.Sessions.GetSessionId + '/element',
+      Body
+    );
     try
       ElemObj := LRes.GetValue<TJSONObject>('value');
-      if not Assigned(ElemObj) then
+      if ElemObj = nil then
         raise EWebDriverError.Create('No element object returned');
 
-      if not ElemObj.TryGetValue<string>('element-6066-11e4-a52e-4f735466cecf',
-        ElemId) then
-      begin
+      if not ElemObj.TryGetValue<string>(
+           'element-6066-11e4-a52e-4f735466cecf', ElemId) then
         ElemId := ElemObj.GetValue<string>('ELEMENT');
-      end;
 
-      Result := TWebElement.Create(Self as IWebDriver, ElemId);
+      Result := TWebElement.Create(FDriver, ElemId);
     finally
       LRes.Free;
     end;
@@ -116,7 +117,7 @@ begin
         if not ElemObj.TryGetValue<string>
           ('element-6066-11e4-a52e-4f735466cecf', ElemId) then
           ElemId := ElemObj.GetValue<string>('ELEMENT');
-        List.Add(TWebElement.Create(Self as IWebDriver, ElemId));
+        List.Add(TWebElement.Create(FDriver, ElemId));
       end;
       Result := List.ToArray;
     finally
