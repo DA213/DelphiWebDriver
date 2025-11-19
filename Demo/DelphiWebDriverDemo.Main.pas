@@ -58,18 +58,18 @@ begin
   var BrowserName := '';
   if ChromeRadioButton.IsChecked then
     begin
-      DriverName  := TBrowser.Chrome.DriverName;
-      BrowserName := TBrowser.Chrome.Name;
+      DriverName  := TWebDriverBrowser.Chrome.DriverName;
+      BrowserName := TWebDriverBrowser.Chrome.Name;
     end;
   if FirefoxRadioButton.IsChecked then
     begin
-      DriverName  := TBrowser.Firefox.DriverName;
-      BrowserName := TBrowser.Firefox.Name;
+      DriverName  := TWebDriverBrowser.Firefox.DriverName;
+      BrowserName := TWebDriverBrowser.Firefox.Name;
     end;
   if EdgeRadioButton.IsChecked then
     begin
-      DriverName  := TBrowser.Edge.DriverName;
-      BrowserName := TBrowser.Edge.Name;
+      DriverName  := TWebDriverBrowser.Edge.DriverName;
+      BrowserName := TWebDriverBrowser.Edge.Name;
     end;
 
   if DriverName.IsEmpty then

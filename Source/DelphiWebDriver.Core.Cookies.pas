@@ -23,11 +23,11 @@ type
     FDriver: IWebDriver;
   public
     constructor Create(ADriver: IWebDriver);
-    function GetAll: TArray<TCookie>;
-    procedure Add(const Cookie: TCookie);
+    function GetAll: TArray<TWebDriverCookie>;
+    procedure Add(const Cookie: TWebDriverCookie);
     procedure Delete(const Name: string);
     procedure DeleteAll;
-    function GetByName(const Name: string): TCookie;
+    function GetByName(const Name: string): TWebDriverCookie;
     function Exists(const Name: string): Boolean;
   end;
 
@@ -41,10 +41,10 @@ begin
   FDriver := ADriver;
 end;
 
-function TWebDriverCookies.GetByName(const Name: string): TCookie;
+function TWebDriverCookies.GetByName(const Name: string): TWebDriverCookie;
 var
-  All: TArray<TCookie>;
-  Cookie: TCookie;
+  All: TArray<TWebDriverCookie>;
+  Cookie: TWebDriverCookie;
 begin
   All := GetAll;
   for Cookie in All do
@@ -55,8 +55,8 @@ end;
 
 function TWebDriverCookies.Exists(const Name: string): Boolean;
 var
-  All: TArray<TCookie>;
-  Cookie: TCookie;
+  All: TArray<TWebDriverCookie>;
+  Cookie: TWebDriverCookie;
 begin
   All := GetAll;
   for Cookie in All do
@@ -65,20 +65,20 @@ begin
   Result := False;
 end;
 
-function TWebDriverCookies.GetAll: TArray<TCookie>;
+function TWebDriverCookies.GetAll: TArray<TWebDriverCookie>;
 var
   LResp: TJSONValue;
   LArr: TJSONArray;
   Item: TJSONValue;
   CookieObj: TJSONObject;
-  Cookie: TCookie;
-  List: TList<TCookie>;
+  Cookie: TWebDriverCookie;
+  List: TList<TWebDriverCookie>;
 begin
   LResp := FDriver.Commands.SendCommand('GET', '/session/' + FDriver.Sessions.GetSessionId +
     '/cookie');
   try
     LArr := LResp.GetValue<TJSONArray>('value');
-    List := TList<TCookie>.Create;
+    List := TList<TWebDriverCookie>.Create;
     try
       for Item in LArr do
       begin
@@ -102,7 +102,7 @@ begin
   end;
 end;
 
-procedure TWebDriverCookies.Add(const Cookie: TCookie);
+procedure TWebDriverCookies.Add(const Cookie: TWebDriverCookie);
 var
   LBody, LObj: TJSONObject;
 begin

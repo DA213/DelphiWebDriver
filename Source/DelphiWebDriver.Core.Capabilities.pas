@@ -96,11 +96,11 @@ begin
 
   if FHeadless then
   begin
-    if SameText(FBrowserName, TBrowser.Chrome.Name) then
+    if SameText(FBrowserName, TWebDriverBrowser.Chrome.Name) then
       ArgsArray.Add('--headless')
-    else if SameText(FBrowserName, TBrowser.Firefox.Name) then
+    else if SameText(FBrowserName, TWebDriverBrowser.Firefox.Name) then
       ArgsArray.Add('-headless')
-    else if SameText(FBrowserName, TBrowser.Edge.Name) then
+    else if SameText(FBrowserName, TWebDriverBrowser.Edge.Name) then
       ArgsArray.Add('--headless=new');
   end;
 
@@ -111,11 +111,11 @@ begin
     begin
       OptionsObj := TJSONObject.Create;
       OptionsObj.AddPair('args', ArgsArray);
-      if SameText(FBrowserName, TBrowser.Chrome.Name) then
+      if SameText(FBrowserName, TWebDriverBrowser.Chrome.Name) then
         AlwaysObj.AddPair('goog:chromeOptions', OptionsObj)
-      else if SameText(FBrowserName, TBrowser.Firefox.Name) then
+      else if SameText(FBrowserName, TWebDriverBrowser.Firefox.Name) then
         AlwaysObj.AddPair('moz:firefoxOptions', OptionsObj)
-      else if SameText(FBrowserName, TBrowser.Edge.Name) then
+      else if SameText(FBrowserName, TWebDriverBrowser.Edge.Name) then
         AlwaysObj.AddPair('ms:edgeOptions', OptionsObj);
     end
   else

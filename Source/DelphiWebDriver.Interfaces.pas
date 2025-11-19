@@ -111,11 +111,11 @@ type
 
   IWebDriverCookies = interface
     ['{9F8A2A3C-0E6D-4F1E-8C7E-9D3A1B5C2F3A}']
-    function GetAll: TArray<TCookie>;
-    procedure Add(const Cookie: TCookie);
+    function GetAll: TArray<TWebDriverCookie>;
+    procedure Add(const Cookie: TWebDriverCookie);
     procedure Delete(const Name: string);
     procedure DeleteAll;
-    function GetByName(const Name: string): TCookie;
+    function GetByName(const Name: string): TWebDriverCookie;
     function Exists(const Name: string): Boolean;
   end;
 

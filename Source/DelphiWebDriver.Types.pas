@@ -16,13 +16,13 @@ uses
 type
   EWebDriverError = class(Exception);
 
-  TBrowser = (Chrome, Firefox, Edge);
-  TBrowserHelper = record Helper for TBrowser
+  TWebDriverBrowser = (Chrome, Firefox, Edge);
+  TWebDriverBrowserHelper = record Helper for TWebDriverBrowser
     function Name : String;
     function DriverName : String;
   end;
 
-  TCookie = record
+  TWebDriverCookie = record
     Name: string;
     Value: string;
     Domain: string;
@@ -126,9 +126,9 @@ begin
   Result.Value    := AValue;
 end;
 
-{ TBrowserHelper }
+{ TWebDriverBrowserHelper }
 
-function TBrowserHelper.DriverName: String;
+function TWebDriverBrowserHelper.DriverName: String;
 begin
   case Self of
     Chrome  : Result := 'chromedriver.exe';
@@ -137,7 +137,7 @@ begin
   end;
 end;
 
-function TBrowserHelper.Name: String;
+function TWebDriverBrowserHelper.Name: String;
 begin
   case Self of
     Chrome  : Result := 'chrome';
