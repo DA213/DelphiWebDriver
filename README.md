@@ -1,3 +1,6 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/DA213/DelphiWebDriver/blob/main/License.txt)
+![Windows](https://img.shields.io/badge/OS-Windows-blue?logo=windows)
+
 # DelphiWebDriver
 
 A modern, lightweight Delphi client (No third party) for the W3C WebDriver protocol (the same protocol used by Selenium). This library allows Delphi developers to automate browsers such as Chrome, Firefox, and Edge by communicating with their corresponding WebDriver executables.
