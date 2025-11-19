@@ -78,6 +78,9 @@ begin
       Exit;
     end;
 
+  // if you have specific path for the driver path then set it with the DriverName
+  // for ex : Server := TWebDriverServer.Create('C:\drivers_folder\' + DriverName);
+
   Server := TWebDriverServer.Create(DriverName);
   try
     Server.Start;
