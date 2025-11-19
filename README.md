@@ -85,18 +85,18 @@ begin
   var BrowserName := '';
   if ChromeRadioButton.IsChecked then
     begin
-      DriverName  := TBrowser.Chrome.DriverName;
-      BrowserName := TBrowser.Chrome.Name;
+      DriverName  := TWebDriverBrowser.Chrome.DriverName;
+      BrowserName := TWebDriverBrowser.Chrome.Name;
     end;
   if FirefoxRadioButton.IsChecked then
     begin
-      DriverName  := TBrowser.Firefox.DriverName;
-      BrowserName := TBrowser.Firefox.Name;
+      DriverName  := TWebDriverBrowser.Firefox.DriverName;
+      BrowserName := TWebDriverBrowser.Firefox.Name;
     end;
   if EdgeRadioButton.IsChecked then
     begin
-      DriverName  := TBrowser.Edge.DriverName;
-      BrowserName := TBrowser.Edge.Name;
+      DriverName  := TWebDriverBrowser.Edge.DriverName;
+      BrowserName := TWebDriverBrowser.Edge.Name;
     end;
 
   if DriverName.IsEmpty then
@@ -104,6 +104,9 @@ begin
       LogsMemo.Text := 'You must select driver';
       Exit;
     end;
+
+  // if you have specific path for the driver path then set it with the DriverName
+  // for ex : Server := TWebDriverServer.Create('C:\drivers_folder\' + DriverName);
 
   Server := TWebDriverServer.Create(DriverName);
   try
@@ -119,6 +122,7 @@ begin
       Driver.Navigation.Navigate('https://www.google.com');
       Driver.Wait.WaitUntilPageLoad;
       LogsMemo.Text := Driver.Document.GetPageSource;
+      Driver.Screenshot.SaveScreenshotToFile('Screenshot.png');
     finally
       Driver.Sessions.Quit;
     end;
@@ -126,6 +130,7 @@ begin
     Server.Stop;
     Server.Free;
   end;
+
 end;
 ```
 
