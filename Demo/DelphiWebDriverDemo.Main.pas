@@ -90,7 +90,7 @@ begin
       Driver.Capabilities.Headless := HeadlessModeCheckBox.IsChecked;
       Driver.Sessions.StartSession;
       Driver.Navigation.GoToURL('https://translate.google.com');
-      Driver.Wait.WaitUntilPageLoad;
+      Driver.Wait.UntilPageLoad;
 
 
       Driver.Actions.MoveToElement(TBy.ClassName('er8xn')).Click
