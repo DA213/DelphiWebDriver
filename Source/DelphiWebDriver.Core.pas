@@ -11,8 +11,6 @@ interface
 
 uses
   DelphiWebDriver.Interfaces,
-  DelphiWebDriver.Types,
-  DelphiWebDriver.Element,
   DelphiWebDriver.Core.Capabilities,
   DelphiWebDriver.Core.Sessions,
   DelphiWebDriver.Core.Navigation,
