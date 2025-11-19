@@ -1,5 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/DA213/DelphiWebDriver/blob/main/License.txt)
 ![Windows](https://img.shields.io/badge/OS-Windows-blue?logo=windows)
+![Linux](https://img.shields.io/badge/OS-Linux-yellow?logo=linux)
+![macOS](https://img.shields.io/badge/OS-macOS-black?logo=apple)
 
 # DelphiWebDriver
 
@@ -136,21 +138,6 @@ begin
 
 end;
 ```
-
----
-
-## ⚡ Notes
-
-* Use **interface variables** (`IWebDriver`, `IWebElement`) for safe automatic memory management.
-* Avoid keeping element references after quitting the driver.
-* `WaitUntilElement` supports **Id, Name, ClassName, CSS Selector, XPath**.
-* `TWebDriverServer` helps start/stop ChromeDriver for your tests.
-
----
-
-## 📜 License
-
-MIT License
 
 ---
 
