@@ -51,6 +51,7 @@ type
     function UntilElement(By: TBy; TimeoutMS: Integer = 5000; IntervalMS: Integer = 200): IWebElement;
     function UntilElements(By: TBy; TimeoutMS: Integer = 5000; IntervalMS: Integer = 200): TArray<IWebElement>;
     procedure UntilPageLoad(TimeoutMS: Integer = 10000);
+    function UntilElementDisappears(By: TBy; TimeoutMS: Integer = 5000; IntervalMS: Integer = 200): Boolean;
   end;
 
   IWebDriverDocument = interface
