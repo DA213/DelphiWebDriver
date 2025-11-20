@@ -124,12 +124,9 @@ type
 
   IWebDriverCapabilities = interface
     ['{F2C8B5C0-B7B4-4D57-9C4B-62F8EDBB6564}']
-    function GetBrowserName: string;
-    procedure SetBrowserName(const Value: string);
     function GetHeadless: Boolean;
     procedure SetHeadless(const Value: Boolean);
     function GetArgs: TList<string>;
-    property BrowserName: string read GetBrowserName write SetBrowserName;
     property Headless: Boolean read GetHeadless write SetHeadless;
     property Arguments: TList<string> read GetArgs;
     function ToJSON: TJSONObject;
@@ -184,6 +181,7 @@ type
     function Screenshot : IWebDriverScreenshot;
     function Alert : IWebDriverAlert;
     function Actions : IWebDriverActions;
+    function Browser : TWebDriverBrowser;
   end;
 
 implementation

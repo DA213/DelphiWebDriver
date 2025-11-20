@@ -25,7 +25,7 @@ type
     X, Y: Integer;
   end;
 
-  TWebDriverBrowser = (Chrome, Firefox, Edge);
+  TWebDriverBrowser = (wdbUnknown, wdbChrome, wdbFirefox, wdbEdge);
   TWebDriverBrowserHelper = record Helper for TWebDriverBrowser
     function Name : String;
     function DriverName : String;
@@ -140,18 +140,18 @@ end;
 function TWebDriverBrowserHelper.DriverName: String;
 begin
   case Self of
-    Chrome  : Result := 'chromedriver.exe';
-    Firefox : Result := 'geckodriver.exe';
-    Edge    : Result := 'msedgedriver.exe';
+    wdbChrome  : Result := 'chromedriver.exe';
+    wdbFirefox : Result := 'geckodriver.exe';
+    wdbEdge    : Result := 'msedgedriver.exe';
   end;
 end;
 
 function TWebDriverBrowserHelper.Name: String;
 begin
   case Self of
-    Chrome  : Result := 'chrome';
-    Firefox : Result := 'firefox';
-    Edge    : Result := 'MicrosoftEdge';
+    wdbChrome  : Result := 'chrome';
+    wdbFirefox : Result := 'firefox';
+    wdbEdge    : Result := 'MicrosoftEdge';
   end;
 end;
 

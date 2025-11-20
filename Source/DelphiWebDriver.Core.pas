@@ -22,12 +22,14 @@ uses
   DelphiWebDriver.Core.Wait,
   DelphiWebDriver.Core.Screenshot,
   DelphiWebDriver.Core.Alert,
-  DelphiWebDriver.Core.Actions;
+  DelphiWebDriver.Core.Actions,
+  DelphiWebDriver.Types;
 
 type
   TWebDriver = class(TInterfacedObject, IWebDriver)
   private
     FBaseUrl: string;
+    FBrowser: TWebDriverBrowser;
     FCapabilities : IWebDriverCapabilities;
     FSessions : IWebDriverSessions;
     FNavigation : IWebDriverNavigation;
@@ -41,7 +43,7 @@ type
     FAlert : IWebDriverAlert;
     FActions : IWebDriverActions;
   public
-    constructor Create(const ABaseUrl: string); virtual;
+    constructor Create(Browser: TWebDriverBrowser; const ABaseUrl: string); virtual;
     function Capabilities: IWebDriverCapabilities;
     function Sessions : IWebDriverSessions;
     function Navigation : IWebDriverNavigation;
@@ -54,16 +56,18 @@ type
     function Screenshot : IWebDriverScreenshot;
     function Alert : IWebDriverAlert;
     function Actions : IWebDriverActions;
+    function Browser : TWebDriverBrowser;
   end;
 
 implementation
 
 { TWebDriver }
 
-constructor TWebDriver.Create(const ABaseUrl: string);
+constructor TWebDriver.Create(Browser: TWebDriverBrowser; const ABaseUrl: string);
 begin
   inherited Create;
   FBaseUrl := ABaseUrl;
+  FBrowser := Browser;
 end;
 
 function TWebDriver.Document: IWebDriverDocument;
@@ -87,10 +91,15 @@ begin
   Result := FAlert;
 end;
 
+function TWebDriver.Browser: TWebDriverBrowser;
+begin
+  Result := FBrowser;
+end;
+
 function TWebDriver.Capabilities: IWebDriverCapabilities;
 begin
   if FCapabilities = nil then
-    FCapabilities := TWebDriverCapabilities.Create;
+    FCapabilities := TWebDriverCapabilities.Create(Self as IWebDriver);
   Result := FCapabilities;
 end;
 

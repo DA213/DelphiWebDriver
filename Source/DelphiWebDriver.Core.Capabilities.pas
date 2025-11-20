@@ -19,18 +19,16 @@ uses
 type
   TWebDriverCapabilities = class(TInterfacedObject, IWebDriverCapabilities)
   private
-    FBrowserName: string;
+    [weak]
+    FDriver: IWebDriver;
     FHeadless: Boolean;
     FArgs: TList<string>;
-    function GetBrowserName: string;
-    procedure SetBrowserName(const Value: string);
     function GetHeadless: Boolean;
     procedure SetHeadless(const Value: Boolean);
     function GetArgs: TList<string>;
   public
-    constructor Create;
+    constructor Create(ADriver: IWebDriver);
     destructor Destroy; override;
-    property BrowserName: string read FBrowserName write FBrowserName;
     property Headless: Boolean read FHeadless write FHeadless;
     property Arguments: TList<string> read FArgs;
     function ToJSON: TJSONObject;
@@ -40,9 +38,10 @@ implementation
 
 { TWebDriverCapabilities }
 
-constructor TWebDriverCapabilities.Create;
+constructor TWebDriverCapabilities.Create(ADriver: IWebDriver);
 begin
-  inherited;
+  inherited Create;
+  FDriver := ADriver;
   FHeadless := False;
   FArgs := TList<string>.Create;
 end;
@@ -56,16 +55,6 @@ end;
 function TWebDriverCapabilities.GetArgs: TList<string>;
 begin
   Result := FArgs;
-end;
-
-function TWebDriverCapabilities.GetBrowserName: string;
-begin
-  Result := FBrowserName;
-end;
-
-procedure TWebDriverCapabilities.SetBrowserName(const Value: string);
-begin
-  FBrowserName := Value;
 end;
 
 function TWebDriverCapabilities.GetHeadless: Boolean;
@@ -85,22 +74,22 @@ var
   ArgsArray: TJSONArray;
   Arg: string;
 begin
-  if FBrowserName = '' then
-    raise Exception.Create('BrowserName cannot be empty');
+  if FDriver.Browser = wdbUnknown then
+    raise Exception.Create('Browser cannot be Unknown');
 
   FirstMatchArray := TJSONArray.Create;
   FirstMatchArray.Add(TJSONObject.Create);
   AlwaysObj := TJSONObject.Create;
-  AlwaysObj.AddPair('browserName', FBrowserName);
+  AlwaysObj.AddPair('browserName', FDriver.Browser.Name);
   ArgsArray := TJSONArray.Create;
 
   if FHeadless then
   begin
-    if SameText(FBrowserName, TWebDriverBrowser.Chrome.Name) then
+    if FDriver.Browser = wdbChrome then
       ArgsArray.Add('--headless')
-    else if SameText(FBrowserName, TWebDriverBrowser.Firefox.Name) then
+    else if FDriver.Browser = wdbFirefox then
       ArgsArray.Add('-headless')
-    else if SameText(FBrowserName, TWebDriverBrowser.Edge.Name) then
+    else if FDriver.Browser = wdbEdge then
       ArgsArray.Add('--headless=new');
   end;
 
@@ -111,11 +100,11 @@ begin
     begin
       OptionsObj := TJSONObject.Create;
       OptionsObj.AddPair('args', ArgsArray);
-      if SameText(FBrowserName, TWebDriverBrowser.Chrome.Name) then
+      if FDriver.Browser = wdbChrome then
         AlwaysObj.AddPair('goog:chromeOptions', OptionsObj)
-      else if SameText(FBrowserName, TWebDriverBrowser.Firefox.Name) then
+      else if FDriver.Browser = wdbFirefox then
         AlwaysObj.AddPair('moz:firefoxOptions', OptionsObj)
-      else if SameText(FBrowserName, TWebDriverBrowser.Edge.Name) then
+      else if FDriver.Browser = wdbEdge then
         AlwaysObj.AddPair('ms:edgeOptions', OptionsObj);
     end
   else
