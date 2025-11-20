@@ -69,6 +69,7 @@ This project provides a pure Delphi implementation of the official **W3C WebDriv
 - **Capabilities**
   - Generate W3C capabilities JSON
   - Custom arguments and preferences
+  - Headless mode
 
 and much more...
 
