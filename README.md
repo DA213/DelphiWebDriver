@@ -5,181 +5,101 @@
 
 # DelphiWebDriver
 
-A modern, lightweight Delphi client (No third party) for the W3C WebDriver protocol (the same protocol used by Selenium). This library allows Delphi developers to automate browsers such as Chrome, Firefox, and Edge by communicating with their corresponding WebDriver executables.
+A Modern and Lightweight **W3C WebDriver Client for Delphi**, written from scratch and fully cross-platform.
+
+This project provides a pure Delphi implementation of the official **W3C WebDriver protocol**, allowing you to automate browsers without Selenium, external dependencies, or .NET bindings.
 
 ---
 
-## ✨ Features
+## 🚀 Features
 
-* Create and manage WebDriver sessions
-* Navigate to URLs
-* Locate elements (`By.Id`, `By.Name`, `By.ClassName`, `By.CSS`, `By.XPath`...)
-* Click elements, send keys, submit forms
-* Take screenshots and save to file
-* Wait for elements to appear or conditions to be true
-* Manage cookies, frames
-* Interface-based memory management for stability
-* Cross-browser support (Chrome, Firefox, Edge) 
-* headless mode support (Chrome, Firefox, Edge)
-* And more cool stuff is coming...
+### ✔ Cross-Platform
+- Windows  
+- Linux  
+- macOS  
 
----
+### ✔ Browser Support
+- **Chrome**
+- **Edge**
+- **Firefox**
 
-## 📁 Project Structure
+### ✔ Implemented WebDriver Functionality
+- **Sessions**
+  - Start / Quit
+  - Session ID handling
 
-```
-/DelphiWebDriver
-  /Source
-    DelphiWebDriver.Core.Capabilities.pas
-    DelphiWebDriver.Core.Commands.pas
-	DelphiWebDriver.Core.Contexts.pas
-	DelphiWebDriver.Core.Cookies.pas
-	DelphiWebDriver.Core.Document.pas
-	DelphiWebDriver.Core.Elements.pas
-	DelphiWebDriver.Core.Navigation.pas
-	DelphiWebDriver.Core.pas	
-	DelphiWebDriver.Core.Screenshot.pas
-	DelphiWebDriver.Core.Sessions.pas
-	DelphiWebDriver.Core.Wait.pas
-	DelphiWebDriver.Core.Alert.pas
-	DelphiWebDriver.Core.Actions.pas
-	DelphiWebDriver.Element.pas
-	DelphiWebDriver.Interfaces.pas
-	DelphiWebDriver.Server.pas
-	DelphiWebDriver.Types.pas
-  /Demo
-    DelphiWebDriverDemo.Main.pas
-    DelphiWebDriverDemo.Main.fmx
-  README.md
-  LICENSE
-```
+- **Navigation**
+  - `ToURL`, Back, Forward, Refresh
+  - Get URL, Get Title
 
-> `Source/` contains the core library units
-> `Demo/` contains a small FMX demo showing simple automation
+- **Elements API**
+  - FindElement / FindElements
+  - ElementExists
+  - Click, SendKeys, Clear, GetText, GetAttribute, etc.
 
----
+- **Screenshots**
+  - Full page screenshot
+  - Element screenshot
 
-## 🚀 Getting Started
+- **JavaScript Execution**
+  - ExecuteScript (sync)
+  - ExecuteAsyncScript
 
-### Requirements
+- **Actions (W3C Actions API)**
+  - Mouse move, click, double-click, right-click
+  - Click & hold, release
+  - Keyboard typing (keyDown / keyUp)
 
-* Delphi 10.2+ (or any recent version)
-* Corresponding WebDriver binaries:  
+- **Alerts**
+  - Accept, Dismiss, GetText, SendKeys
 
-  * ChromeDriver - Chrome (download from here https://developer.chrome.com/docs/chromedriver/downloads)
-  * GeckoDriver - Firefox (download from here https://github.com/mozilla/geckodriver/releases)
-  * MSEdgeDriver - Edge (download from here https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver)
+- **Wait API**
+  - Wait for element
+  - Wait for elements
+  - Wait for element disappearance
+  - Wait for page load
+  - Wait for URL / Title conditions
 
-Place the driver executable next to your application.
+- **Page Source**
+  - GetPageSource
 
----
+- **Command Layer**
+  - Full low-level command transport
+  - JSON request/response handling
 
-### Example Usage
+- **Capabilities**
+  - Generate W3C capabilities JSON
+  - Custom arguments and preferences
 
-```delphi
-uses
-  DelphiWebDriver.Core,
-  DelphiWebDriver.Types,
-  DelphiWebDriver.Server,
-  DelphiWebDriver.Interfaces;
-
-procedure TMainForm.StartDriverButtonClick(Sender: TObject);
-var
-  Server: TWebDriverServer;
-  Driver: IWebDriver;
-begin
-  var DriverName := '';
-  var BrowserName := '';
-  if ChromeRadioButton.IsChecked then
-    begin
-      DriverName  := TWebDriverBrowser.Chrome.DriverName;
-      BrowserName := TWebDriverBrowser.Chrome.Name;
-    end;
-  if FirefoxRadioButton.IsChecked then
-    begin
-      DriverName  := TWebDriverBrowser.Firefox.DriverName;
-      BrowserName := TWebDriverBrowser.Firefox.Name;
-    end;
-  if EdgeRadioButton.IsChecked then
-    begin
-      DriverName  := TWebDriverBrowser.Edge.DriverName;
-      BrowserName := TWebDriverBrowser.Edge.Name;
-    end;
-
-  if DriverName.IsEmpty then
-    begin
-      LogsMemo.Text := 'You must select driver';
-      Exit;
-    end;
-
-  // if you have specific path for the driver path then set it with the DriverName
-  // for ex : Server := TWebDriverServer.Create('C:\drivers_folder\' + DriverName);
-
-  Server := TWebDriverServer.Create(DriverName);
-  try
-    Server.Start;
-    Driver := TWebDriver.Create('http://localhost:9515');
-    try
-      Driver.Capabilities.BrowserName := BrowserName;
-      Driver.Capabilities.Headless := HeadlessModeCheckBox.IsChecked;
-      // Optional
-      // Driver.Capabilities.Args.Add('--disable-gpu');
-      // Driver.Capabilities.Args.Add('--window-size=1920,1080');
-      Driver.Sessions.StartSession;
-      Driver.Navigation.Navigate('https://www.google.com');
-      Driver.Wait.WaitUntilPageLoad;
-      LogsMemo.Text := Driver.Document.GetPageSource;
-      Driver.Screenshot.SaveScreenshotToFile('Screenshot.png');
-    finally
-      Driver.Sessions.Quit;
-    end;
-  finally
-    Server.Stop;
-    Server.Free;
-  end;
-
-end;
-```
+and much more...
 
 ---
 
-## 🤝 Contributing
+## 📦 Installation
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
-
----
-
-### 💖 Support the Project
-
-If you would like to support this project, you can make a donation via PayPal:
-
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.me/abderrahmane213)
+Just include the `DelphiWebDriver` folder in your project.  
+No external libraries required.
 
 ---
 
-## 🐞 Issues
+## 💬 Support the Project
 
-If you find a bug, please provide:
+If you find this project useful, consider supporting development ❤️
 
-* Steps to reproduce
-* Expected behavior
-* Actual behavior
-* Delphi version
-* WebDriver and browser version
+**PayPal:**  
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/ncp/payment/Q4KSUE7D7SU9N)
+Thank you!
 
 ---
 
-## 🗺️ Roadmap
+## 📄 License
 
-* [x] Minimal viable implementation
-* [x] Element location by CSS/XPath
-* [x] Wait for elements and conditions
-* [x] Click, send keys, submit forms
-* [x] Wait for page to load
-* [x] Screenshot support  
-* [x] Cross-browser (Chrome, Firefox, Edge)
-* [x] Cookie management
-* [x] Frame 
-* [x] JavaScript execution
-* [x] handling headless mode
-* [ ] Full WebDriver command coverage
+MIT License.  
+Free to use in personal and commercial applications.
+
+---
+
+## 📬 Author
+
+**Abderrahmane**  
+GitHub: https://github.com/DA213/DelphiWebDriver
