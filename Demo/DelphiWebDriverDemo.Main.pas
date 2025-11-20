@@ -54,39 +54,28 @@ var
   Server: TWebDriverServer;
   Driver: IWebDriver;
 begin
-  var DriverName := '';
-  var BrowserName := '';
+  var Browser : TWebDriverBrowser;
   if ChromeRadioButton.IsChecked then
-    begin
-      DriverName  := TWebDriverBrowser.Chrome.DriverName;
-      BrowserName := TWebDriverBrowser.Chrome.Name;
-    end;
+    Browser := TWebDriverBrowser.wdbChrome;
   if FirefoxRadioButton.IsChecked then
-    begin
-      DriverName  := TWebDriverBrowser.Firefox.DriverName;
-      BrowserName := TWebDriverBrowser.Firefox.Name;
-    end;
+    Browser := TWebDriverBrowser.wdbFirefox;
   if EdgeRadioButton.IsChecked then
-    begin
-      DriverName  := TWebDriverBrowser.Edge.DriverName;
-      BrowserName := TWebDriverBrowser.Edge.Name;
-    end;
+    Browser := TWebDriverBrowser.wdbEdge;
 
-  if DriverName.IsEmpty then
+  if Browser = wdbUnknown then
     begin
       LogsMemo.Text := 'You must select driver';
       Exit;
     end;
 
-  // if you have specific path for the driver path then set it with the DriverName
-  // for ex : Server := TWebDriverServer.Create('C:\drivers_folder\' + DriverName);
+  // if you have specific path for the driver path then set it with the Browser.DriverName
+  // for ex : Server := TWebDriverServer.Create('C:\drivers_folder\' + Browser.DriverName);
 
-  Server := TWebDriverServer.Create(DriverName);
+  Server := TWebDriverServer.Create(Browser.DriverName);
   try
     Server.Start;
-    Driver := TWebDriver.Create('http://localhost:9515');
+    Driver := TWebDriver.Create(Browser, 'http://localhost:9515');
     try
-      Driver.Capabilities.BrowserName := BrowserName;
       Driver.Capabilities.Headless := HeadlessModeCheckBox.IsChecked;
       Driver.Sessions.StartSession;
       Driver.Navigation.GoToURL('https://translate.google.com');
