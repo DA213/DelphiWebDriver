@@ -6,7 +6,6 @@
 # DelphiWebDriver
 
 A Modern and Lightweight **W3C WebDriver Client for Delphi**, written from scratch and fully cross-platform.
-
 This project provides a pure Delphi implementation of the official **W3C WebDriver protocol**, allowing you to automate browsers without Selenium, external dependencies, or .NET bindings.
 
 ---
@@ -87,8 +86,8 @@ No external libraries required.
 If you find this project useful, consider supporting development ❤️
 
 **PayPal:**  
+
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/ncp/payment/Q4KSUE7D7SU9N)
-Thank you!
 
 ---
 
