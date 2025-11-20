@@ -37,6 +37,7 @@ type
     procedure MaximizeWindow;
     procedure MinimizeWindow;
     procedure FullscreenWindow;
+    procedure SetWindowSize(const Width, Height: Integer);
   end;
 
 implementation
@@ -52,6 +53,27 @@ constructor TWebDriverContexts.Create(ADriver: IWebDriver);
 begin
   inherited Create;
   FDriver := ADriver;
+end;
+
+procedure TWebDriverContexts.SetWindowSize(const Width, Height: Integer);
+var
+  Body: TJSONObject;
+  R: TJSONValue;
+begin
+  Body := TJSONObject.Create;
+  R := nil;
+  try
+    Body.AddPair('width', TJSONNumber.Create(Width));
+    Body.AddPair('height', TJSONNumber.Create(Height));
+    R := FDriver.Commands.SendCommand(
+      'POST',
+      '/session/' + FDriver.Sessions.GetSessionId + '/window/rect',
+      Body
+    );
+  finally
+    Body.Free;
+    R.Free;
+  end;
 end;
 
 procedure TWebDriverContexts.FullscreenWindow;

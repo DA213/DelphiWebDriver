@@ -101,6 +101,7 @@ type
     procedure MaximizeWindow;
     procedure MinimizeWindow;
     procedure FullscreenWindow;
+    procedure SetWindowSize(const Width, Height: Integer);
   end;
 
   IWebDriverNavigation = interface
