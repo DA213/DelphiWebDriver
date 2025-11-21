@@ -30,6 +30,7 @@ type
     LogsMemo: TMemo;
     HeadlessModeCheckBox: TCheckBox;
     OperaRadioButton: TRadioButton;
+    BraveRadioButton: TRadioButton;
     procedure StartDriverButtonClick(Sender: TObject);
   private
     { Private declarations }
@@ -68,6 +69,12 @@ begin
       BrowserConfig.Browser := wdbOpera;
       BrowserConfig.BinaryPath := 'C:\Users\<YOUR USERNAME>\AppData\Local\Programs\Opera\opera.exe';
     end;
+  if BraveRadioButton.IsChecked then
+    begin
+      // for brave you have to set the brave binary file path + you should use the ChromeDriver binary
+      BrowserConfig.Browser := wdbBrave;
+      BrowserConfig.BinaryPath := 'C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe';
+    end;
 
   if BrowserConfig.Browser = wdbUnknown then
     begin
@@ -88,7 +95,6 @@ begin
       Driver.Sessions.StartSession;
       Driver.Navigation.GoToURL('https://translate.google.com');
       Driver.Wait.UntilPageLoad;
-
 
       Driver.Actions.MoveToElement(TBy.ClassName('er8xn')).Click
                                                           .SendKeys('DelphiWebDriver Is Here')

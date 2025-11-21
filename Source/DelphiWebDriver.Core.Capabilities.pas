@@ -80,7 +80,8 @@ begin
     case FDriver.BrowserConfig.Browser of
       wdbChrome,
       wdbEdge,
-      wdbOpera:
+      wdbOpera,
+      wdbBrave:
         ArgsArray.Add('--headless=new');
       wdbFirefox:
         ArgsArray.Add('-headless');
@@ -100,7 +101,7 @@ begin
   CapObj.AddPair('browserName', FDriver.BrowserConfig.Browser.Name);
 
   case FDriver.BrowserConfig.Browser of
-    wdbChrome:
+    wdbChrome, wdbBrave:
       CapObj.AddPair('goog:chromeOptions', OptionsObj);
 
     wdbEdge:

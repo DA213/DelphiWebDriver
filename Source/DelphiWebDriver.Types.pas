@@ -25,7 +25,7 @@ type
     X, Y: Integer;
   end;
 
-  TWebDriverBrowser = (wdbUnknown, wdbChrome, wdbFirefox, wdbEdge, wdbOpera);
+  TWebDriverBrowser = (wdbUnknown, wdbChrome, wdbFirefox, wdbEdge, wdbOpera, wdbBrave);
   TWebDriverBrowserHelper = record Helper for TWebDriverBrowser
     function Name : String;
     function DriverName : String;
@@ -150,6 +150,7 @@ begin
     wdbFirefox : Result := 'geckodriver.exe';
     wdbEdge    : Result := 'msedgedriver.exe';
     wdbOpera   : Result := 'operadriver.exe';
+    wdbBrave   : Result := 'chromedriver.exe';
   end;
 end;
 
@@ -160,6 +161,7 @@ begin
     wdbFirefox : Result := 'firefox';
     wdbEdge    : Result := 'MicrosoftEdge';
     wdbOpera   : Result := 'opera';
+    wdbBrave   : Result := 'chrome';
   end;
 end;
 
