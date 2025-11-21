@@ -1,3 +1,10 @@
+{
+  ------------------------------------------------------------------------------
+  Author: ABDERRAHMANE
+  Github: https://github.com/DA213/DelphiWebDriver
+  ------------------------------------------------------------------------------
+}
+
 unit DelphiWebDriver.Core.Actions;
 
 interface
@@ -135,10 +142,23 @@ var
   PointerActionsArray, KeyActionsArray: TJSONArray;
   I: Integer;
   ActionItem: TWebDriverActionItem;
-  ActionObj, OriginObj, PauseObj: TJSONObject;
+  ActionObj, PauseObj: TJSONObject;
+
+  procedure AddOriginForElement(var AObj: TJSONObject; const ElementId: string);
+  var
+    O: TJSONObject;
+  begin
+    O := TJSONObject.Create;
+    O.AddPair('element-6066-11e4-a52e-4f735466cecf', ElementId);
+    if FDriver.BrowserConfig.Browser = wdbOpera then
+      O.AddPair('ELEMENT', ElementId);
+    AObj.AddPair('origin', O);
+  end;
+
 begin
   if FActions.Count = 0 then
     Exit;
+
   Root := TJSONObject.Create;
   PointerActionsArray := TJSONArray.Create;
   KeyActionsArray := TJSONArray.Create;
@@ -146,95 +166,89 @@ begin
     PointerAction := TJSONObject.Create;
     PointerAction.AddPair('type', 'pointer');
     PointerAction.AddPair('id', 'mouse');
-    PointerAction.AddPair('parameters', TJSONObject.Create.AddPair('pointerType', 'mouse'));
+    PointerAction.AddPair('parameters',
+      TJSONObject.Create.AddPair('pointerType', 'mouse')
+    );
     for I := 0 to FActions.Count - 1 do
     begin
       ActionItem := FActions[I];
-      if ActionItem.ActionType in [
-         TWebDriverActionItemType.MouseMove,
-         TWebDriverActionItemType.Click,
-         TWebDriverActionItemType.DoubleClick,
-         TWebDriverActionItemType.MouseDown,
-         TWebDriverActionItemType.MouseUp,
-         TWebDriverActionItemType.ContextClick
-         ] then
-      begin
-        case ActionItem.ActionType of
-          TWebDriverActionItemType.MouseMove:
-            begin
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerMove');
-              OriginObj := TJSONObject.Create;
-              OriginObj.AddPair('element-6066-11e4-a52e-4f735466cecf', ActionItem.ElementId);
-              ActionObj.AddPair('origin', OriginObj);
-              ActionObj.AddPair('x', TJSONNumber.Create(ActionItem.X));
-              ActionObj.AddPair('y', TJSONNumber.Create(ActionItem.Y));
-              PointerActionsArray.Add(ActionObj);
-            end;
-          TWebDriverActionItemType.Click:
-            begin
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerDown');
-              ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerUp');
-              ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-            end;
+      case ActionItem.ActionType of
 
-          TWebDriverActionItemType.DoubleClick:
-            begin
-              ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerDown'); ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-              ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerUp'); ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-              ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerDown'); ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-              ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerUp'); ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-            end;
+        TWebDriverActionItemType.MouseMove:
+          begin
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerMove');
+            AddOriginForElement(ActionObj, ActionItem.ElementId);
+            ActionObj.AddPair('x', TJSONNumber.Create(ActionItem.X));
+            ActionObj.AddPair('y', TJSONNumber.Create(ActionItem.Y));
+            PointerActionsArray.Add(ActionObj);
+          end;
 
-          TWebDriverActionItemType.MouseDown:
-            begin
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerDown');
-              ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-            end;
+        TWebDriverActionItemType.Click:
+          begin
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerDown');
+            ActionObj.AddPair('button', TJSONNumber.Create(0));
+            PointerActionsArray.Add(ActionObj);
 
-          TWebDriverActionItemType.MouseUp:
-            begin
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerUp');
-              ActionObj.AddPair('button', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-            end;
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerUp');
+            ActionObj.AddPair('button', TJSONNumber.Create(0));
+            PointerActionsArray.Add(ActionObj);
+          end;
 
-          TWebDriverActionItemType.ContextClick:
-            begin
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerMove');
-              OriginObj := TJSONObject.Create;
-              OriginObj.AddPair('element-6066-11e4-a52e-4f735466cecf', ActionItem.ElementId);
-              ActionObj.AddPair('origin', OriginObj);
-              ActionObj.AddPair('x', TJSONNumber.Create(0));
-              ActionObj.AddPair('y', TJSONNumber.Create(0));
-              PointerActionsArray.Add(ActionObj);
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerDown');
-              ActionObj.AddPair('button', TJSONNumber.Create(2));
-              PointerActionsArray.Add(ActionObj);
-              PauseObj := TJSONObject.Create;
-              PauseObj.AddPair('type', 'pause');
-              PauseObj.AddPair('duration', TJSONNumber.Create(50));
-              PointerActionsArray.Add(PauseObj);
-              ActionObj := TJSONObject.Create;
-              ActionObj.AddPair('type', 'pointerUp');
-              ActionObj.AddPair('button', TJSONNumber.Create(2));
-              PointerActionsArray.Add(ActionObj);
-            end;
-        end;
+        TWebDriverActionItemType.DoubleClick:
+          begin
+            ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerDown'); ActionObj.AddPair('button',0);
+            PointerActionsArray.Add(ActionObj);
+            ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerUp'); ActionObj.AddPair('button',0);
+            PointerActionsArray.Add(ActionObj);
+            ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerDown'); ActionObj.AddPair('button',0);
+            PointerActionsArray.Add(ActionObj);
+            ActionObj := TJSONObject.Create; ActionObj.AddPair('type','pointerUp'); ActionObj.AddPair('button',0);
+            PointerActionsArray.Add(ActionObj);
+          end;
+
+        TWebDriverActionItemType.MouseDown:
+          begin
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerDown');
+            ActionObj.AddPair('button', 0);
+            PointerActionsArray.Add(ActionObj);
+          end;
+
+        TWebDriverActionItemType.MouseUp:
+          begin
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerUp');
+            ActionObj.AddPair('button', 0);
+            PointerActionsArray.Add(ActionObj);
+          end;
+
+        TWebDriverActionItemType.ContextClick:
+          begin
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerMove');
+            AddOriginForElement(ActionObj, ActionItem.ElementId);
+            ActionObj.AddPair('x', 0);
+            ActionObj.AddPair('y', 0);
+            PointerActionsArray.Add(ActionObj);
+
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerDown');
+            ActionObj.AddPair('button', 2);
+            PointerActionsArray.Add(ActionObj);
+
+            PauseObj := TJSONObject.Create;
+            PauseObj.AddPair('type', 'pause');
+            PauseObj.AddPair('duration', 50);
+            PointerActionsArray.Add(PauseObj);
+
+            ActionObj := TJSONObject.Create;
+            ActionObj.AddPair('type', 'pointerUp');
+            ActionObj.AddPair('button', 2);
+            PointerActionsArray.Add(ActionObj);
+          end;
       end;
     end;
 
@@ -242,28 +256,38 @@ begin
     KeyboardAction := TJSONObject.Create;
     KeyboardAction.AddPair('type', 'key');
     KeyboardAction.AddPair('id', 'keyboard');
+
     for I := 0 to FActions.Count - 1 do
     begin
       ActionItem := FActions[I];
+
       if ActionItem.ActionType in [TWebDriverActionItemType.KeyDown, TWebDriverActionItemType.KeyUp] then
       begin
         ActionObj := TJSONObject.Create;
+
         if ActionItem.ActionType = TWebDriverActionItemType.KeyDown then
           ActionObj.AddPair('type', 'keyDown')
         else
           ActionObj.AddPair('type', 'keyUp');
+
         ActionObj.AddPair('value', ActionItem.Key);
         KeyActionsArray.Add(ActionObj);
       end;
     end;
+
     KeyboardAction.AddPair('actions', KeyActionsArray);
+
     var ActionsArray := TJSONArray.Create;
     ActionsArray.Add(PointerAction);
     ActionsArray.Add(KeyboardAction);
     Root.AddPair('actions', ActionsArray);
-    FDriver.Commands.SendCommand('POST',
+
+    FDriver.Commands.SendCommand(
+      'POST',
       '/session/' + FDriver.Sessions.GetSessionId + '/actions',
-      Root).Free;
+      Root
+    ).Free;
+
   finally
     Root.Free;
   end;

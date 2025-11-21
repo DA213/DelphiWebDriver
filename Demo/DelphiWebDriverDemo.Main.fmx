@@ -69,13 +69,22 @@ object MainForm: TMainForm
       Text = 'Edge'
     end
     object HeadlessModeCheckBox: TCheckBox
-      Position.X = 288.000000000000000000
+      Position.X = 440.000000000000000000
       Position.Y = 8.000000000000000000
       Size.Width = 113.000000000000000000
       Size.Height = 19.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 3
       Text = 'Headless Mode'
+    end
+    object OperaRadioButton: TRadioButton
+      Position.X = 272.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Text = 'Opera'
     end
   end
   object LogsMemo: TMemo

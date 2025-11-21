@@ -29,6 +29,7 @@ type
     EdgeRadioButton: TRadioButton;
     LogsMemo: TMemo;
     HeadlessModeCheckBox: TCheckBox;
+    OperaRadioButton: TRadioButton;
     procedure StartDriverButtonClick(Sender: TObject);
   private
     { Private declarations }
@@ -53,30 +54,37 @@ procedure TMainForm.StartDriverButtonClick(Sender: TObject);
 var
   Server: TWebDriverServer;
   Driver: IWebDriver;
+  BrowserConfig : TWebDriverBrowserConfig;
 begin
-  var Browser : TWebDriverBrowser;
   if ChromeRadioButton.IsChecked then
-    Browser := TWebDriverBrowser.wdbChrome;
+    BrowserConfig.Browser := wdbChrome;
   if FirefoxRadioButton.IsChecked then
-    Browser := TWebDriverBrowser.wdbFirefox;
+    BrowserConfig.Browser := wdbFirefox;
   if EdgeRadioButton.IsChecked then
-    Browser := TWebDriverBrowser.wdbEdge;
-
-  if Browser = wdbUnknown then
+    BrowserConfig.Browser := wdbEdge;
+  if OperaRadioButton.IsChecked then
     begin
-      LogsMemo.Text := 'You must select driver';
+      // for opera you have to set the opera binary file path
+      BrowserConfig.Browser := wdbOpera;
+      BrowserConfig.BinaryPath := 'C:\Users\<YOUR USERNAME>\AppData\Local\Programs\Opera\opera.exe';
+    end;
+
+  if BrowserConfig.Browser = wdbUnknown then
+    begin
+      LogsMemo.Text := 'You must select a driver';
       Exit;
     end;
 
-  // if you have specific path for the driver path then set it with the Browser.DriverName
-  // for ex : Server := TWebDriverServer.Create('C:\drivers_folder\' + Browser.DriverName);
+  // if you have specific path for the driver path then set it with the BrowserConfig.Browser.DriverName
+  // for ex : Server := TWebDriverServer.Create('C:\drivers_folder\' + BrowserConfig.Browser.DriverName);
 
-  Server := TWebDriverServer.Create(Browser.DriverName);
+  Server := TWebDriverServer.Create(BrowserConfig.Browser.DriverName);
   try
     Server.Start;
-    Driver := TWebDriver.Create(Browser, 'http://localhost:9515');
+    Driver := TWebDriver.Create(BrowserConfig, 'http://localhost:9515');
     try
       Driver.Capabilities.Headless := HeadlessModeCheckBox.IsChecked;
+      // Driver.Capabilities.Arguments.Add('Args Goes Here');
       Driver.Sessions.StartSession;
       Driver.Navigation.GoToURL('https://translate.google.com');
       Driver.Wait.UntilPageLoad;

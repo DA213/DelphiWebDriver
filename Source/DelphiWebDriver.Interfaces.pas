@@ -181,7 +181,7 @@ type
     function Screenshot : IWebDriverScreenshot;
     function Alert : IWebDriverAlert;
     function Actions : IWebDriverActions;
-    function Browser : TWebDriverBrowser;
+    function BrowserConfig : TWebDriverBrowserConfig;
   end;
 
 implementation

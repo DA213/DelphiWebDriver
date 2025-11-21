@@ -239,11 +239,27 @@ end;
 procedure TWebDriverContexts.SwitchToWindow(const Handle: string);
 var
   JSON: TJSONObject;
+  SessionId: string;
+  Endpoint: string;
 begin
+  SessionId := FDriver.Sessions.GetSessionId;
+  if FDriver.BrowserConfig.Browser = wdbOpera then
+  begin
+    Endpoint := '/session/' + SessionId + '/window';
+    JSON := TJSONObject.Create;
+    try
+      JSON.AddPair('name', Handle);
+      FDriver.Commands.SendCommand('POST', Endpoint, JSON).Free;
+    finally
+      JSON.Free;
+    end;
+    Exit;
+  end;
+  Endpoint := '/session/' + SessionId + '/window';
   JSON := TJSONObject.Create;
   try
     JSON.AddPair('handle', Handle);
-    FDriver.Commands.SendCommand('POST', '/session/' + FDriver.Sessions.GetSessionId + '/window', JSON).Free;
+    FDriver.Commands.SendCommand('POST', Endpoint, JSON).Free;
   finally
     JSON.Free;
   end;

@@ -1,4 +1,4 @@
-{
+﻿{
   ------------------------------------------------------------------------------
   Author: ABDERRAHMANE
   Github: https://github.com/DA213/DelphiWebDriver
@@ -29,8 +29,8 @@ type
   public
     constructor Create(ADriver: IWebDriver);
     destructor Destroy; override;
-    property Headless: Boolean read FHeadless write FHeadless;
-    property Arguments: TList<string> read FArgs;
+    property Headless: Boolean read GetHeadless write SetHeadless;
+    property Arguments: TList<string> read GetArgs;
     function ToJSON: TJSONObject;
   end;
 
@@ -69,53 +69,59 @@ end;
 
 function TWebDriverCapabilities.ToJSON: TJSONObject;
 var
-  FirstMatchArray: TJSONArray;
-  AlwaysObj, OptionsObj: TJSONObject;
+  CapObj, OptionsObj, OperaOpts: TJSONObject;
   ArgsArray: TJSONArray;
   Arg: string;
 begin
-  if FDriver.Browser = wdbUnknown then
-    raise Exception.Create('Browser cannot be Unknown');
-
-  FirstMatchArray := TJSONArray.Create;
-  FirstMatchArray.Add(TJSONObject.Create);
-  AlwaysObj := TJSONObject.Create;
-  AlwaysObj.AddPair('browserName', FDriver.Browser.Name);
   ArgsArray := TJSONArray.Create;
 
   if FHeadless then
   begin
-    if FDriver.Browser = wdbChrome then
-      ArgsArray.Add('--headless')
-    else if FDriver.Browser = wdbFirefox then
-      ArgsArray.Add('-headless')
-    else if FDriver.Browser = wdbEdge then
-      ArgsArray.Add('--headless=new');
+    case FDriver.BrowserConfig.Browser of
+      wdbChrome,
+      wdbEdge,
+      wdbOpera:
+        ArgsArray.Add('--headless=new');
+      wdbFirefox:
+        ArgsArray.Add('-headless');
+    end;
   end;
 
   for Arg in FArgs do
     ArgsArray.Add(Arg);
 
-  if ArgsArray.Count > 0 then
-    begin
-      OptionsObj := TJSONObject.Create;
-      OptionsObj.AddPair('args', ArgsArray);
-      if FDriver.Browser = wdbChrome then
-        AlwaysObj.AddPair('goog:chromeOptions', OptionsObj)
-      else if FDriver.Browser = wdbFirefox then
-        AlwaysObj.AddPair('moz:firefoxOptions', OptionsObj)
-      else if FDriver.Browser = wdbEdge then
-        AlwaysObj.AddPair('ms:edgeOptions', OptionsObj);
-    end
-  else
-    ArgsArray.Free;
+  OptionsObj := TJSONObject.Create;
+  OptionsObj.AddPair('args', ArgsArray);
 
-  Result := TJSONObject.Create;
-  Result.AddPair('capabilities',
-    TJSONObject.Create
-      .AddPair('firstMatch', FirstMatchArray)
-      .AddPair('alwaysMatch', AlwaysObj)
-  );
+  if FDriver.BrowserConfig.BinaryPath <> '' then
+    OptionsObj.AddPair('binary', FDriver.BrowserConfig.BinaryPath);
+
+  CapObj := TJSONObject.Create;
+  CapObj.AddPair('browserName', FDriver.BrowserConfig.Browser.Name);
+
+  case FDriver.BrowserConfig.Browser of
+    wdbChrome:
+      CapObj.AddPair('goog:chromeOptions', OptionsObj);
+
+    wdbEdge:
+      CapObj.AddPair('ms:edgeOptions', OptionsObj);
+
+    wdbFirefox:
+      CapObj.AddPair('moz:firefoxOptions', OptionsObj);
+
+    wdbOpera:
+    begin
+      CapObj.AddPair('goog:chromeOptions', OptionsObj);
+      if FDriver.BrowserConfig.BinaryPath <> '' then
+      begin
+        OperaOpts := TJSONObject.Create;
+        OperaOpts.AddPair('binary', FDriver.BrowserConfig.BinaryPath);
+        CapObj.AddPair('operaOptions', OperaOpts);
+      end;
+    end;
+  end;
+
+  Result := CapObj;
 end;
 
 end.

@@ -1,4 +1,4 @@
-{
+﻿{
   ------------------------------------------------------------------------------
   Author: ABDERRAHMANE
   Github: https://github.com/DA213/DelphiWebDriver
@@ -96,47 +96,80 @@ end;
 
 procedure TWebElement.Click;
 var
-  JSON : TJSONObject;
+  Body: TJSONObject;
 begin
-  JSON := TJSONObject.Create;
+  Body := TJSONObject.Create;
   try
     FDriver.Commands.SendCommand('POST',
-      '/session/' + FDriver.Sessions.GetSessionId + '/element/' + FElementId + '/click',
-      JSON
+      '/session/' + FDriver.Sessions.GetSessionId +
+      '/element/' + FElementId + '/click',
+      Body
     ).Free;
   finally
-    JSON.Free;
+    Body.Free;
   end;
 end;
 
 procedure TWebElement.Clear;
 var
-  JSON : TJSONObject;
+  Body: TJSONObject;
 begin
-  JSON := TJSONObject.Create;
+  Body := TJSONObject.Create;
   try
-    FDriver.Commands.SendCommand('POST',
-      '/session/' + FDriver.Sessions.GetSessionId + '/element/' + FElementId + '/clear',
-      JSON
+    if FDriver.BrowserConfig.Browser = wdbOpera then
+      Body.AddPair('id', FElementId);
+
+    FDriver.Commands.SendCommand(
+      'POST',
+      '/session/' + FDriver.Sessions.GetSessionId +
+      '/element/' + FElementId + '/clear',
+      Body
     ).Free;
+
   finally
-    JSON.Free;
+    Body.Free;
   end;
 end;
 
 procedure TWebElement.SendKeys(const Text: string);
 var
-  Body: TJSONObject;
+  W3CBody: TJSONObject;
+  JsonWireBody: TJSONObject;
+  ValArray: TJSONArray;
+  Ch: Char;
 begin
-  Body := TJSONObject.Create;
+  W3CBody := TJSONObject.Create;
+  W3CBody.AddPair('text', Text);
+
+  JsonWireBody := TJSONObject.Create;
+  ValArray := TJSONArray.Create;
+
+  for Ch in Text do
+    ValArray.Add(string(Ch));
+
+  JsonWireBody.AddPair('value', ValArray);
   try
-    Body.AddPair('text', Text);
-    FDriver.Commands.SendCommand('POST',
-      '/session/' + FDriver.Sessions.GetSessionId + '/element/' + FElementId + '/value',
-      Body
-    ).Free;
+    if FDriver.BrowserConfig.Browser = wdbOpera then
+    begin
+      FDriver.Commands.SendCommand(
+        'POST',
+        '/session/' + FDriver.Sessions.GetSessionId +
+        '/element/' + FElementId + '/value',
+        JsonWireBody
+      ).Free;
+    end
+    else
+    begin
+      FDriver.Commands.SendCommand(
+        'POST',
+        '/session/' + FDriver.Sessions.GetSessionId +
+        '/element/' + FElementId + '/value',
+        W3CBody
+      ).Free;
+    end;
   finally
-    Body.Free;
+    W3CBody.Free;
+    JsonWireBody.Free;
   end;
 end;
 

@@ -1,4 +1,4 @@
-{
+﻿{
   ------------------------------------------------------------------------------
   Author: ABDERRAHMANE
   Github: https://github.com/DA213/DelphiWebDriver
@@ -12,7 +12,8 @@ interface
 uses
   System.JSON,
   DelphiWebDriver.Interfaces,
-  DelphiWebDriver.Types;
+  DelphiWebDriver.Types,
+  System.SysUtils;
 
 type
   TWebDriverSessions = class(TInterfacedObject, IWebDriverSessions)
@@ -56,34 +57,62 @@ begin
 end;
 
 function TWebDriverSessions.StartSession: string;
+label
+  ParseResponse;
 var
-  LCapObj: TJSONObject;
-  LRes: TJSONValue;
+  CapObj, TopObj, AlwaysMatch: TJSONObject;
+  LRes, LValue: TJSONValue;
   LSessionObj: TJSONObject;
 begin
-  LCapObj := nil;
+  CapObj := FDriver.Capabilities.ToJSON;
   try
-    LCapObj := FDriver.Capabilities.ToJSON;
-    LRes := FDriver.Commands.SendCommand('POST', '/session', LCapObj);
-    try
-      LSessionObj := LRes.GetValue<TJSONObject>('value');
-      if not Assigned(LSessionObj) then
-        raise EWebDriverError.Create('No value object returned from WebDriver');
+    if FDriver.BrowserConfig.Browser = wdbOpera then
+    begin
+      TopObj := TJSONObject.Create;
+      try
+        TopObj.AddPair('desiredCapabilities', CapObj.Clone as TJSONObject);
+        LRes := FDriver.Commands.SendCommand('POST', '/session', TopObj);
+      finally
+        TopObj.Free;
+      end;
+      goto ParseResponse;
+    end;
 
-      if LSessionObj.TryGetValue<string>('sessionId', FSessionId) then
-        begin
-          Result := FSessionId;
-          FWindowHandle := FDriver.Contexts.GetWindowHandle;
-        end
-      else
-        raise EWebDriverError.Create('SessionId not found in response: ' +
-          LRes.ToString);
+    TopObj := TJSONObject.Create;
+    try
+      AlwaysMatch := TJSONObject.Create;
+      AlwaysMatch.AddPair('alwaysMatch', CapObj.Clone as TJSONObject);
+      TopObj.AddPair('capabilities', AlwaysMatch);
+      LRes := FDriver.Commands.SendCommand('POST', '/session', TopObj);
+    finally
+      TopObj.Free;
+    end;
+
+    ParseResponse:
+    try
+      LValue := LRes.GetValue<TJSONValue>('value');
+      if Assigned(LValue) and (LValue is TJSONObject) then
+      begin
+        LSessionObj := TJSONObject(LValue);
+        LSessionObj.TryGetValue<string>('sessionId', FSessionId);
+      end;
+
+      if FSessionId = '' then
+        LRes.TryGetValue<string>('sessionId', FSessionId);
+
+      if FSessionId = '' then
+        raise EWebDriverError.Create('SessionId not found: ' + LRes.ToString);
+
+      FWindowHandle := FDriver.Contexts.GetWindowHandle;
+
+      Result := FSessionId;
     finally
       LRes.Free;
     end;
   finally
-    LCapObj.Free;
+    CapObj.Free;
   end;
 end;
 
 end.
+

@@ -29,7 +29,7 @@ type
   TWebDriver = class(TInterfacedObject, IWebDriver)
   private
     FBaseUrl: string;
-    FBrowser: TWebDriverBrowser;
+    FBrowserConfig: TWebDriverBrowserConfig;
     FCapabilities : IWebDriverCapabilities;
     FSessions : IWebDriverSessions;
     FNavigation : IWebDriverNavigation;
@@ -43,7 +43,7 @@ type
     FAlert : IWebDriverAlert;
     FActions : IWebDriverActions;
   public
-    constructor Create(Browser: TWebDriverBrowser; const ABaseUrl: string); virtual;
+    constructor Create(BrowserConfig: TWebDriverBrowserConfig; const ABaseUrl: string); virtual;
     function Capabilities: IWebDriverCapabilities;
     function Sessions : IWebDriverSessions;
     function Navigation : IWebDriverNavigation;
@@ -56,18 +56,18 @@ type
     function Screenshot : IWebDriverScreenshot;
     function Alert : IWebDriverAlert;
     function Actions : IWebDriverActions;
-    function Browser : TWebDriverBrowser;
+    function BrowserConfig : TWebDriverBrowserConfig;
   end;
 
 implementation
 
 { TWebDriver }
 
-constructor TWebDriver.Create(Browser: TWebDriverBrowser; const ABaseUrl: string);
+constructor TWebDriver.Create(BrowserConfig: TWebDriverBrowserConfig; const ABaseUrl: string);
 begin
   inherited Create;
   FBaseUrl := ABaseUrl;
-  FBrowser := Browser;
+  FBrowserConfig := BrowserConfig;
 end;
 
 function TWebDriver.Document: IWebDriverDocument;
@@ -91,9 +91,9 @@ begin
   Result := FAlert;
 end;
 
-function TWebDriver.Browser: TWebDriverBrowser;
+function TWebDriver.BrowserConfig: TWebDriverBrowserConfig;
 begin
-  Result := FBrowser;
+  Result := FBrowserConfig;
 end;
 
 function TWebDriver.Capabilities: IWebDriverCapabilities;

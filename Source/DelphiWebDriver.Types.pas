@@ -25,10 +25,16 @@ type
     X, Y: Integer;
   end;
 
-  TWebDriverBrowser = (wdbUnknown, wdbChrome, wdbFirefox, wdbEdge);
+  TWebDriverBrowser = (wdbUnknown, wdbChrome, wdbFirefox, wdbEdge, wdbOpera);
   TWebDriverBrowserHelper = record Helper for TWebDriverBrowser
     function Name : String;
     function DriverName : String;
+  end;
+
+  type
+  TWebDriverBrowserConfig = record
+    Browser: TWebDriverBrowser;
+    BinaryPath: string;
   end;
 
   TWebDriverCookie = record
@@ -143,6 +149,7 @@ begin
     wdbChrome  : Result := 'chromedriver.exe';
     wdbFirefox : Result := 'geckodriver.exe';
     wdbEdge    : Result := 'msedgedriver.exe';
+    wdbOpera   : Result := 'operadriver.exe';
   end;
 end;
 
@@ -152,6 +159,7 @@ begin
     wdbChrome  : Result := 'chrome';
     wdbFirefox : Result := 'firefox';
     wdbEdge    : Result := 'MicrosoftEdge';
+    wdbOpera   : Result := 'opera';
   end;
 end;
 
