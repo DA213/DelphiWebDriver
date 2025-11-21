@@ -22,6 +22,7 @@ This project provides a pure Delphi implementation of the official **W3C WebDriv
 - **Edge**
 - **Firefox**
 - **Opera**
+- **Brave**
 
 ### ✔ Implemented WebDriver Functionality
 - **Sessions**
