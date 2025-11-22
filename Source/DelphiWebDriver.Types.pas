@@ -16,6 +16,14 @@ uses
 type
   EWebDriverError = class(Exception);
 
+  TWebDriverProxy = record
+    Host: string;
+    Port: Integer;
+    Username: string;
+    Password: string;
+    EnableProxy: Boolean;
+  end;
+
   TWebDriverActionItemType = (MouseMove, MouseDown, MouseUp, Click, DoubleClick, KeyDown, KeyUp, Pause, ContextClick);
 
   TWebDriverActionItem = record
@@ -31,7 +39,6 @@ type
     function DriverName : String;
   end;
 
-  type
   TWebDriverBrowserConfig = record
     Browser: TWebDriverBrowser;
     BinaryPath: string;

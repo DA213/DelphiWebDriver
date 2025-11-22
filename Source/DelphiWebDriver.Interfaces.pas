@@ -128,8 +128,11 @@ type
     ['{F2C8B5C0-B7B4-4D57-9C4B-62F8EDBB6564}']
     function GetHeadless: Boolean;
     procedure SetHeadless(const Value: Boolean);
+    function GetProxy: TWebDriverProxy;
+    procedure SetProxy(const Value: TWebDriverProxy);
     function GetArgs: TList<string>;
     property Headless: Boolean read GetHeadless write SetHeadless;
+    property Proxy: TWebDriverProxy read GetProxy write SetProxy;
     property Arguments: TList<string> read GetArgs;
     function ToJSON: TJSONObject;
   end;
