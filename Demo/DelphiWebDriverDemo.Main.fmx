@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   Caption = 'Delphi WebDriver Demo'
   ClientHeight = 485
-  ClientWidth = 657
+  ClientWidth = 710
   Position = DesktopCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -18,7 +18,7 @@ object MainForm: TMainForm
     Margins.Bottom = 5.000000000000000000
     Position.X = 5.000000000000000000
     Position.Y = 427.000000000000000000
-    Size.Width = 647.000000000000000000
+    Size.Width = 700.000000000000000000
     Size.Height = 53.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
@@ -37,7 +37,7 @@ object MainForm: TMainForm
     Margins.Bottom = 5.000000000000000000
     Position.X = 5.000000000000000000
     Position.Y = 5.000000000000000000
-    Size.Width = 647.000000000000000000
+    Size.Width = 700.000000000000000000
     Size.Height = 36.000000000000000000
     Size.PlatformDefault = False
     Stroke.Kind = None
@@ -69,7 +69,7 @@ object MainForm: TMainForm
       Text = 'Edge'
     end
     object HeadlessModeCheckBox: TCheckBox
-      Position.X = 528.000000000000000000
+      Position.X = 456.000000000000000000
       Position.Y = 8.000000000000000000
       Size.Width = 113.000000000000000000
       Size.Height = 19.000000000000000000
@@ -95,6 +95,15 @@ object MainForm: TMainForm
       TabOrder = 5
       Text = 'Brave'
     end
+    object ProxyCheckBox: TCheckBox
+      Position.X = 592.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 97.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      Text = 'Enable Proxy'
+    end
   end
   object LogsMemo: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -104,11 +113,11 @@ object MainForm: TMainForm
     Margins.Top = 5.000000000000000000
     Margins.Right = 5.000000000000000000
     Margins.Bottom = 5.000000000000000000
-    Size.Width = 647.000000000000000000
+    Size.Width = 700.000000000000000000
     Size.Height = 366.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
-    Viewport.Width = 643.000000000000000000
+    Viewport.Width = 696.000000000000000000
     Viewport.Height = 362.000000000000000000
   end
 end

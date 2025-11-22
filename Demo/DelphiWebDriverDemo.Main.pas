@@ -1,4 +1,4 @@
-unit DelphiWebDriverDemo.Main;
+﻿unit DelphiWebDriverDemo.Main;
 
 interface
 
@@ -31,6 +31,7 @@ type
     HeadlessModeCheckBox: TCheckBox;
     OperaRadioButton: TRadioButton;
     BraveRadioButton: TRadioButton;
+    ProxyCheckBox: TCheckBox;
     procedure StartDriverButtonClick(Sender: TObject);
   private
     { Private declarations }
@@ -91,14 +92,20 @@ begin
     Driver := TWebDriver.Create(BrowserConfig, 'http://localhost:9515');
     try
       Driver.Capabilities.Headless := HeadlessModeCheckBox.IsChecked;
-      // Driver.Capabilities.Arguments.Add('Args Goes Here');
+
+      var Proxy : TWebDriverProxy;
+      Proxy.Host := '';
+      Proxy.Port := 8080;
+      Proxy.Username := '';
+      Proxy.Password := '';
+      Proxy.EnableProxy := ProxyCheckBox.IsChecked;  // Fill proxy data and set "Proxy.EnableProxy" to True if you want to enable proxy
+
+      Driver.Capabilities.Proxy := Proxy;
       Driver.Sessions.StartSession;
-      Driver.Navigation.GoToURL('https://translate.google.com');
+      Driver.Navigation.GoToURL('https://api.myip.com');
       Driver.Wait.UntilPageLoad;
 
-      Driver.Actions.MoveToElement(TBy.ClassName('er8xn')).Click
-                                                          .SendKeys('DelphiWebDriver Is Here')
-                                                          .Perform;
+      LogsMemo.Text := Driver.Document.GetPageSource;
 
       ShowMessage('Msg Sent :)');
 
