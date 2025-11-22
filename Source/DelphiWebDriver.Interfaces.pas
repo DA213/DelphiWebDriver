@@ -69,6 +69,8 @@ type
     procedure ScrollBy(X, Y: Integer);
     procedure ScrollToTop;
     procedure ScrollToBottom;
+    function PrintPdfPage: string;
+    function SavePrintedPdfPage(const FileName: string): Boolean;
   end;
 
   IWebDriverCommands = interface

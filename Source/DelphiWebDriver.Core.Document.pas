@@ -1,4 +1,4 @@
-{
+﻿{
   ------------------------------------------------------------------------------
   Author: ABDERRAHMANE
   Github: https://github.com/DA213/DelphiWebDriver
@@ -11,6 +11,8 @@ interface
 
 uses
   System.SysUtils,
+  System.Classes,
+  System.NetEncoding,
   System.JSON,
   DelphiWebDriver.Interfaces;
 
@@ -29,6 +31,8 @@ type
     procedure ScrollBy(X, Y: Integer);
     procedure ScrollToTop;
     procedure ScrollToBottom;
+    function PrintPdfPage: string;
+    function SavePrintedPdfPage(const FileName: string): Boolean;
   end;
 
 implementation
@@ -124,6 +128,48 @@ begin
     Result := JSON.GetValue<string>('value');
   finally
     JSON.Free;
+  end;
+end;
+
+function TWebDriverDocument.SavePrintedPdfPage(const FileName: string): Boolean;
+var
+  Base64Pdf: string;
+  PdfBytes: TBytes;
+  FS: TFileStream;
+begin
+  Result := False;
+  Base64Pdf := PrintPdfPage;
+  if Base64Pdf = '' then
+    Exit;
+  PdfBytes := TNetEncoding.Base64.DecodeStringToBytes(Base64Pdf);
+  FS := TFileStream.Create(FileName, fmCreate);
+  try
+    FS.WriteBuffer(PdfBytes, Length(PdfBytes));
+    Result := True;
+  finally
+    FS.Free;
+  end;
+end;
+
+function TWebDriverDocument.PrintPdfPage: string;
+var
+  Body: TJSONObject;
+  Res: TJSONValue;
+begin
+  Body := TJSONObject.Create;
+  try
+    Res := FDriver.Commands.SendCommand(
+      'POST',
+      '/session/' + FDriver.Sessions.GetSessionId + '/print',
+      Body
+    );
+    try
+      Result := Res.GetValue<string>('value');
+    finally
+      Res.Free;
+    end;
+  finally
+    Body.Free;
   end;
 end;
 
