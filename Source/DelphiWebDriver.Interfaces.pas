@@ -71,6 +71,7 @@ type
     procedure ScrollToBottom;
     function PrintPdfPage: string;
     function SavePrintedPdfPage(const FileName: string): Boolean;
+    function GetBodyElement: IWebElement;
   end;
 
   IWebDriverCommands = interface

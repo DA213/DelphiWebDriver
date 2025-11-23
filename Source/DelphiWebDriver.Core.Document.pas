@@ -14,7 +14,8 @@ uses
   System.Classes,
   System.NetEncoding,
   System.JSON,
-  DelphiWebDriver.Interfaces;
+  DelphiWebDriver.Interfaces,
+  DelphiWebDriver.Types;
 
 type
   TWebDriverDocument = class(TInterfacedObject, IWebDriverDocument)
@@ -33,6 +34,7 @@ type
     procedure ScrollToBottom;
     function PrintPdfPage: string;
     function SavePrintedPdfPage(const FileName: string): Boolean;
+    function GetBodyElement: IWebElement;
   end;
 
 implementation
@@ -43,6 +45,11 @@ constructor TWebDriverDocument.Create(ADriver: IWebDriver);
 begin
   inherited Create;
   FDriver := ADriver;
+end;
+
+function TWebDriverDocument.GetBodyElement: IWebElement;
+begin
+  Result := FDriver.Elements.FindElement(TBy.Css('body'));
 end;
 
 function TWebDriverDocument.ExecuteAsyncScript(const Script: string; const Args: array of string): TJSONValue;
