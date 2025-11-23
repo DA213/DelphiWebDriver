@@ -23,7 +23,8 @@ This project provides a pure Delphi implementation of the official **W3C WebDriv
 - **Firefox**
 - **Opera**
 - **Brave**
-- **Proxy Support (With Authentication) For [Edge, Opera, Brave and Chrome(half way)]**
+- **Proxy Support (Authentication Not Requuired) For [Edge, Opera, Brave]**
+- **Proxy Support (Authentication Requuired) For [Chrome, FireFox]**
 
 ### ✔ Implemented WebDriver Functionality
 - **Sessions**
