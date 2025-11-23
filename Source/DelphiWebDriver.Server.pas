@@ -36,7 +36,7 @@ type
   public
     constructor Create(const AExePath: string);
     destructor Destroy; override;
-    procedure Start;
+    procedure Start(Port: Integer = 9515);
     procedure Stop;
     property Started: Boolean read FStarted;
   end;
@@ -61,7 +61,7 @@ begin
   inherited;
 end;
 
-procedure TWebDriverServer.Start;
+procedure TWebDriverServer.Start(Port: Integer = 9515);
 {$IFDEF POSIX}
 var
   PID: pid_t;
@@ -76,7 +76,7 @@ begin
   if not FileExists(FExePath) then
     raise Exception.Create('WebDriver executable not found: ' + FExePath);
 
-  Cmd := FExePath + ' --port=9515';
+  Cmd := FExePath + ' --port=' + Port.ToString;
 
   {$IFDEF MSWINDOWS}
   var SI: TStartupInfo;
@@ -91,7 +91,7 @@ begin
 
   {$IFDEF POSIX}
   ArgV[0] := PAnsiChar(AnsiString(FExePath));
-  ArgV[1] := PAnsiChar(AnsiString('--port=9515'));
+  ArgV[1] := PAnsiChar(AnsiString('--port=' + Port.ToString));
   ArgV[2] := nil;
 
   PID := fork;
