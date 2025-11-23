@@ -160,6 +160,7 @@ var
   Arg: string;
 begin
   ArgsArray := TJSONArray.Create;
+  OptionsObj := TJSONObject.Create;
 
   if FHeadless then
   begin
@@ -185,7 +186,15 @@ begin
           end;
         wdbFirefox:
           begin
-            // ToDo : Add Proxy Support For FireFox
+            var FFProxyPrefs := TJSONObject.Create;
+            FFProxyPrefs.AddPair('network.proxy.type', TJSONNumber.Create(1));
+            FFProxyPrefs.AddPair('network.proxy.http', FProxy.Host);
+            FFProxyPrefs.AddPair('network.proxy.http_port', TJSONNumber.Create(FProxy.Port));
+            FFProxyPrefs.AddPair('network.proxy.ssl', FProxy.Host);
+            FFProxyPrefs.AddPair('network.proxy.ssl_port', TJSONNumber.Create(FProxy.Port));
+            FFProxyPrefs.AddPair('signon.autologin.proxy', TJSONFalse.Create);
+            FFProxyPrefs.AddPair('network.auth.allow-subresource-auth', TJSONFalse.Create);
+            OptionsObj.AddPair('prefs', FFProxyPrefs);
           end;
       end;
     end;
@@ -193,7 +202,6 @@ begin
   for Arg in FArgs do
     ArgsArray.Add(Arg);
 
-  OptionsObj := TJSONObject.Create;
   OptionsObj.AddPair('args', ArgsArray);
 
   if FDriver.BrowserConfig.BinaryPath <> '' then
